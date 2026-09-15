@@ -1,0 +1,183 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { randomUUID } from 'crypto';
+
+interface ContactBody {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
+
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+
+async function isRateLimited(ip: string): Promise<boolean> {
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+  if (!redisUrl || !redisToken) return false;
+
+  try {
+    const key = `ratelimit:contact:${ip.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
+    const url = `${redisUrl}/incr/${encodeURIComponent(key)}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${redisToken}` },
+    });
+    if (!res.ok) return false;
+    const data = (await res.json()) as { result: number };
+
+    if (data.result === 1) {
+      await fetch(`${redisUrl}/expire/${encodeURIComponent(key)}/3600`, {
+        headers: { Authorization: `Bearer ${redisToken}` },
+      });
+    }
+
+    return data.result > 3; // Limit to 3 contact messages per hour per IP
+  } catch {
+    return false;
+  }
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const requestId = randomUUID();
+  res.setHeader('Cache-Control', 'no-store');
+
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({
+      success: false,
+      error: 'Method Not Allowed',
+      requestId,
+    });
+  }
+
+  try {
+    const forwardedFor = req.headers['x-forwarded-for'];
+    const clientIp = typeof forwardedFor === 'string'
+      ? forwardedFor.split(',')[0].trim()
+      : req.socket.remoteAddress || 'unknown';
+
+    const limited = await isRateLimited(clientIp);
+    if (limited) {
+      return res.status(429).json({
+        success: false,
+        error: 'Too many requests. Please try again later.',
+        requestId,
+      });
+    }
+
+    const body = (req.body || {}) as ContactBody;
+    const name = typeof body.name === 'string' ? body.name.trim().slice(0, 100) : '';
+    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+    const subject = typeof body.subject === 'string' ? body.subject.trim().slice(0, 150) : 'General Inquiry';
+    const message = typeof body.message === 'string' ? body.message.trim().slice(0, 3000) : '';
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name is required.',
+        requestId,
+      });
+    }
+
+    if (!email || email.length > 254 || !EMAIL_REGEX.test(email)) {
+      return res.status(400).json({
+        success: false,
+        error: 'A valid email address is required.',
+        requestId,
+      });
+    }
+
+    if (!message) {
+      return res.status(400).json({
+        success: false,
+        error: 'Message content is required.',
+        requestId,
+      });
+    }
+
+    // Optional email dispatch via Resend if RESEND_API_KEY is configured
+    const resendKey = process.env.RESEND_API_KEY;
+    const recipientEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'aarogyadamu@gmail.com';
+
+    if (resendKey) {
+      const emailRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resendKey}`,
+        },
+        body: JSON.stringify({
+          from: 'AarogyaDamu Contact <noreply@aarogyadamu.com>',
+          to: recipientEmail,
+          reply_to: email,
+          subject: `[Website Contact] ${subject}`,
+          text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`,
+        }),
+      });
+
+      if (!emailRes.ok) {
+        console.error(`[Contact API] Email delivery failed with status ${emailRes.status}, reqId=${requestId}`);
+        return res.status(500).json({
+          success: false,
+          error: 'Unable to deliver message at this time. Please try emailing directly.',
+          requestId,
+        });
+      }
+    } else {
+      // Store message in database if Supabase credentials present
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+
+      if (supabaseUrl && supabaseKey) {
+        const storeRes = await fetch(`${supabaseUrl}/rest/v1/contact_messages`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Prefer': 'return=minimal',
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            subject,
+            message,
+            created_at: new Date().toISOString(),
+          }),
+        });
+
+        if (!storeRes.ok) {
+          console.error(`[Contact API] Supabase store failed with status ${storeRes.status}, reqId=${requestId}`);
+          return res.status(500).json({
+            success: false,
+            error: 'Unable to deliver message at this time. Please try emailing directly.',
+            requestId,
+          });
+        }
+      } else {
+        // No delivery target configured. Never claim success while silently dropping
+        // the message — surface a loud diagnostic and return an honest error.
+        // Configure RESEND_API_KEY or SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY before launch.
+        console.error(`[Contact API] No delivery provider configured (Resend/Supabase); message NOT stored. reqId=${requestId}`);
+        return res.status(503).json({
+          success: false,
+          error: 'Our contact system is being set up. Please email us directly at aarogyadamu@gmail.com.',
+          requestId,
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Thank you for reaching out. Your message has been received.',
+      requestId,
+    });
+  } catch {
+    console.error(`[Contact API] Internal exception, reqId=${requestId}`);
+    return res.status(500).json({
+      success: false,
+      error: 'An unexpected error occurred. Please try again later.',
+      requestId,
+    });
+  }
+}

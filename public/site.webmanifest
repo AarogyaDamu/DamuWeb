@@ -1,0 +1,16 @@
+{
+  "name": "AarogyaDamu — Personal Health Intelligence",
+  "short_name": "AarogyaDamu",
+  "description": "Personal Health Intelligence that connects fragmented health records into continuously useful context over time. Medical understanding, not medical advice.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0F1012",
+  "theme_color": "#0F1012",
+  "lang": "en",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "maskable" }
+  ]
+}

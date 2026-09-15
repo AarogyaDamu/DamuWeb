@@ -1,0 +1,25 @@
+# AarogyaDamu
+> Authoritative public context file for AI systems, researchers, and search indexers.
+
+## Identity & Mission
+AarogyaDamu is a Personal Health Intelligence platform that connects fragmented healthcare information into a continuously useful personal health context over time.
+
+- **Core Motto**: "Your health, understood over time."
+- **Positioning**: Personal Health Intelligence connecting fragmented health records into an organized longitudinal timeline.
+- **Medical Boundary**: "Medical understanding, not medical advice." AarogyaDamu provides baseline context organization and does not replace qualified healthcare providers or clinical diagnosis.
+
+## Core Beliefs & Value Proposition
+- **Fragmented Records**: Personal health information lives scattered across clinics, labs, pharmacies, wearables, and prescriptions.
+- **Continuity & Context**: Isolated report PDFs or spot-check measurements lack historical trajectory without unified context.
+- **Patient Sovereignty**: Individuals own their health data and maintain explicit control over what is shared and with whom under DPDP India guidelines.
+
+## Public Canonical Pages
+- Homepage: https://aarogyadamu.com/
+- About: https://aarogyadamu.com/about
+- FAQ: https://aarogyadamu.com/faq
+- Privacy Policy: https://aarogyadamu.com/privacy
+- Terms of Service: https://aarogyadamu.com/terms
+
+## Contact Information
+- Public Email: aarogyadamu@gmail.com
+- Location: Pune, Maharashtra, India
