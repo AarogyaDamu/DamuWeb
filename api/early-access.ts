@@ -48,6 +48,43 @@ async function isRateLimited(ip: string): Promise<boolean> {
   }
 }
 
+async function sendResendEmail(resendKey: string, to: string, replyTo: string, subject: string, text: string, reqId: string): Promise<boolean> {
+  // First try custom domain sender, fallback to onboarding@resend.dev if custom domain is not yet verified in Resend
+  const senders = [
+    'AarogyaDamu Waitlist <noreply@aarogyadamu.com>',
+    'AarogyaDamu Waitlist <onboarding@resend.dev>'
+  ];
+
+  for (const from of senders) {
+    try {
+      const emailRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resendKey}`,
+        },
+        body: JSON.stringify({
+          from,
+          to,
+          reply_to: replyTo,
+          subject,
+          text,
+        }),
+      });
+
+      if (emailRes.ok) {
+        return true;
+      } else {
+        const errText = await emailRes.text();
+        console.warn(`[EarlyAccess API] Email via '${from}' failed with status ${emailRes.status}: ${errText}, reqId=${reqId}`);
+      }
+    } catch (err) {
+      console.error(`[EarlyAccess API] Resend fetch error for '${from}', reqId=${reqId}`, err);
+    }
+  }
+  return false;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const requestId = randomUUID();
   res.setHeader('Cache-Control', 'no-store');
@@ -103,57 +140,80 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // 5. Store lead in Supabase if configured
+    let emailSent = false;
+    let dbStored = false;
+
+    // 5. Try sending Email via Resend if RESEND_API_KEY is configured
+    const resendKey = process.env.RESEND_API_KEY;
+    const recipientEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'aarogyadamu@gmail.com';
+
+    if (resendKey) {
+      const subject = `[AarogyaDamu Waitlist] ${name ? name : email}`;
+      const text = `New Waitlist / Early Access Sign-up:\n\nName: ${name || 'Not provided'}\nEmail: ${email}\nMessage: ${message || 'None'}\nSource: ${source}\nConsent Version: ${consentVersion}\nSubmitted At: ${new Date().toISOString()}`;
+      emailSent = await sendResendEmail(resendKey, recipientEmail, email, subject, text, requestId);
+    }
+
+    // 6. Try storing lead in Supabase if configured
     const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
     if (supabaseUrl && supabaseKey) {
-      const storeRes = await fetch(`${supabaseUrl}/rest/v1/early_access_leads`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Prefer': 'return=minimal',
-        },
-        body: JSON.stringify({
-          email,
-          name: name || null,
-          message: message || null,
-          source,
-          consent_version: consentVersion,
-          created_at: new Date().toISOString(),
-        }),
-      });
-
-      if (!storeRes.ok && storeRes.status !== 409) {
-        // Log non-PII diagnostic error
-        console.error(`[EarlyAccess API] Storage failed with status ${storeRes.status}, reqId=${requestId}`);
-        return res.status(500).json({
-          success: false,
-          error: 'Unable to process your request at this time. Please try again later.',
-          requestId,
+      try {
+        const storeRes = await fetch(`${supabaseUrl}/rest/v1/early_access_leads`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': supabaseKey,
+            'Authorization': `Bearer ${supabaseKey}`,
+            'Prefer': 'return=minimal',
+          },
+          body: JSON.stringify({
+            email,
+            name: name || null,
+            message: message || null,
+            source,
+            consent_version: consentVersion,
+            created_at: new Date().toISOString(),
+          }),
         });
+
+        if (storeRes.ok || storeRes.status === 409) {
+          dbStored = true;
+        } else {
+          console.error(`[EarlyAccess API] Supabase storage failed with status ${storeRes.status}, reqId=${requestId}`);
+        }
+      } catch (dbErr) {
+        console.error(`[EarlyAccess API] Supabase fetch exception, reqId=${requestId}`, dbErr);
       }
-    } else {
-      // No storage configured. Do not claim success while silently dropping the
-      // signup. Configure SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY before launch.
-      console.error(`[EarlyAccess API] No storage provider configured; signup NOT stored. reqId=${requestId}`);
-      return res.status(503).json({
-        success: false,
-        error: 'Early access sign-ups are being set up. Please email us at aarogyadamu@gmail.com and we\'ll add you.',
+    }
+
+    // 7. Return success if either Email was sent OR database storage succeeded
+    if (emailSent || dbStored) {
+      return res.status(200).json({
+        success: true,
+        message: "You're on the AarogyaDamu early-access list.",
         requestId,
       });
     }
 
-    // 6. Return honest success response
-    return res.status(200).json({
-      success: true,
-      message: "You're on the AarogyaDamu early-access list.",
+    // 8. Handle cases where neither delivery method succeeded
+    if (!resendKey && (!supabaseUrl || !supabaseKey)) {
+      console.error(`[EarlyAccess API] No delivery provider configured. reqId=${requestId}`);
+      return res.status(503).json({
+        success: false,
+        error: "Early access sign-ups are being set up. Please email us directly at aarogyadamu@gmail.com.",
+        requestId,
+      });
+    }
+
+    console.error(`[EarlyAccess API] All delivery attempts failed. emailSent=${emailSent}, dbStored=${dbStored}, reqId=${requestId}`);
+    return res.status(500).json({
+      success: false,
+      error: 'Unable to process your request at this time. Please try again later or email us directly at aarogyadamu@gmail.com.',
       requestId,
     });
   } catch (err) {
-    console.error(`[EarlyAccess API] Internal exception, reqId=${requestId}`);
+    console.error(`[EarlyAccess API] Internal exception, reqId=${requestId}`, err);
     return res.status(500).json({
       success: false,
       error: 'An unexpected error occurred. Please try again later.',
@@ -161,3 +221,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 }
+

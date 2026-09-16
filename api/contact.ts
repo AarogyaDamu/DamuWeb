@@ -37,6 +37,42 @@ async function isRateLimited(ip: string): Promise<boolean> {
   }
 }
 
+async function sendResendEmail(resendKey: string, to: string, replyTo: string, subject: string, text: string, reqId: string): Promise<boolean> {
+  const senders = [
+    'AarogyaDamu Contact <noreply@aarogyadamu.com>',
+    'AarogyaDamu Contact <onboarding@resend.dev>'
+  ];
+
+  for (const from of senders) {
+    try {
+      const emailRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${resendKey}`,
+        },
+        body: JSON.stringify({
+          from,
+          to,
+          reply_to: replyTo,
+          subject,
+          text,
+        }),
+      });
+
+      if (emailRes.ok) {
+        return true;
+      } else {
+        const errText = await emailRes.text();
+        console.warn(`[Contact API] Email via '${from}' failed with status ${emailRes.status}: ${errText}, reqId=${reqId}`);
+      }
+    } catch (err) {
+      console.error(`[Contact API] Resend fetch error for '${from}', reqId=${reqId}`, err);
+    }
+  }
+  return false;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const requestId = randomUUID();
   res.setHeader('Cache-Control', 'no-store');
@@ -95,40 +131,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    // Optional email dispatch via Resend if RESEND_API_KEY is configured
+    let emailSent = false;
+    let dbStored = false;
+
+    // 1. Try Email dispatch via Resend if RESEND_API_KEY is configured
     const resendKey = process.env.RESEND_API_KEY;
     const recipientEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'aarogyadamu@gmail.com';
 
     if (resendKey) {
-      const emailRes = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${resendKey}`,
-        },
-        body: JSON.stringify({
-          from: 'AarogyaDamu Contact <noreply@aarogyadamu.com>',
-          to: recipientEmail,
-          reply_to: email,
-          subject: `[Website Contact] ${subject}`,
-          text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`,
-        }),
-      });
+      const emailSubject = `[Website Contact] ${subject}`;
+      const text = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n\nSubmitted At: ${new Date().toISOString()}`;
+      emailSent = await sendResendEmail(resendKey, recipientEmail, email, emailSubject, text, requestId);
+    }
 
-      if (!emailRes.ok) {
-        console.error(`[Contact API] Email delivery failed with status ${emailRes.status}, reqId=${requestId}`);
-        return res.status(500).json({
-          success: false,
-          error: 'Unable to deliver message at this time. Please try emailing directly.',
-          requestId,
-        });
-      }
-    } else {
-      // Store message in database if Supabase credentials present
-      const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    // 2. Try storing message in Supabase if credentials present
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      if (supabaseUrl && supabaseKey) {
+    if (supabaseUrl && supabaseKey) {
+      try {
         const storeRes = await fetch(`${supabaseUrl}/rest/v1/contact_messages`, {
           method: 'POST',
           headers: {
@@ -146,34 +167,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           }),
         });
 
-        if (!storeRes.ok) {
+        if (storeRes.ok || storeRes.status === 409) {
+          dbStored = true;
+        } else {
           console.error(`[Contact API] Supabase store failed with status ${storeRes.status}, reqId=${requestId}`);
-          return res.status(500).json({
-            success: false,
-            error: 'Unable to deliver message at this time. Please try emailing directly.',
-            requestId,
-          });
         }
-      } else {
-        // No delivery target configured. Never claim success while silently dropping
-        // the message — surface a loud diagnostic and return an honest error.
-        // Configure RESEND_API_KEY or SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY before launch.
-        console.error(`[Contact API] No delivery provider configured (Resend/Supabase); message NOT stored. reqId=${requestId}`);
-        return res.status(503).json({
-          success: false,
-          error: 'Our contact system is being set up. Please email us directly at aarogyadamu@gmail.com.',
-          requestId,
-        });
+      } catch (dbErr) {
+        console.error(`[Contact API] Supabase fetch exception, reqId=${requestId}`, dbErr);
       }
     }
 
-    return res.status(200).json({
-      success: true,
-      message: 'Thank you for reaching out. Your message has been received.',
+    // 3. Return success if either Email was sent OR database storage succeeded
+    if (emailSent || dbStored) {
+      return res.status(200).json({
+        success: true,
+        message: 'Thank you for reaching out. Your message has been received.',
+        requestId,
+      });
+    }
+
+    // 4. Handle cases where no delivery targets are configured or all attempts failed
+    if (!resendKey && (!supabaseUrl || !supabaseKey)) {
+      console.error(`[Contact API] No delivery provider configured (Resend/Supabase); message NOT stored. reqId=${requestId}`);
+      return res.status(503).json({
+        success: false,
+        error: 'Our contact system is being set up. Please email us directly at aarogyadamu@gmail.com.',
+        requestId,
+      });
+    }
+
+    console.error(`[Contact API] All delivery attempts failed. emailSent=${emailSent}, dbStored=${dbStored}, reqId=${requestId}`);
+    return res.status(500).json({
+      success: false,
+      error: 'Unable to deliver message at this time. Please try emailing directly at aarogyadamu@gmail.com.',
       requestId,
     });
-  } catch {
-    console.error(`[Contact API] Internal exception, reqId=${requestId}`);
+  } catch (err) {
+    console.error(`[Contact API] Internal exception, reqId=${requestId}`, err);
     return res.status(500).json({
       success: false,
       error: 'An unexpected error occurred. Please try again later.',
@@ -181,3 +211,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 }
+
