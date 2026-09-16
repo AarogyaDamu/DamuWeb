@@ -125,8 +125,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     } else {
       // Store message in database if Supabase credentials present
-      const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+      const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
       if (supabaseUrl && supabaseKey) {
         const storeRes = await fetch(`${supabaseUrl}/rest/v1/contact_messages`, {
