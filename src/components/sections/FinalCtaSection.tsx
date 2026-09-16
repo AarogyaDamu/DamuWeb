@@ -57,6 +57,7 @@ export function FinalCtaSection({ onNavigate, onOpenEarlyAccess }: FinalCtaSecti
           <button
             id="final-cta-primary"
             onClick={() => {
+              trackEvent('cta_click', { cta_name: 'get_in_touch', location: 'final_cta', page_path: window.location.pathname });
               trackEvent('primary_cta_click', { cta_name: 'get_in_touch', location: 'final_cta' });
               onOpenEarlyAccess();
             }}
@@ -68,6 +69,7 @@ export function FinalCtaSection({ onNavigate, onOpenEarlyAccess }: FinalCtaSecti
           <button
             id="final-cta-damu"
             onClick={() => {
+              trackEvent('cta_click', { cta_name: 'meet_damu', location: 'final_cta', page_path: window.location.pathname });
               trackEvent('secondary_cta_click', { cta_name: 'meet_damu', location: 'final_cta' });
               const el = document.getElementById('damu');
               if (el) el.scrollIntoView({ behavior: 'smooth' });

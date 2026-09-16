@@ -27,6 +27,7 @@ export function EarlyAccessModal({ isOpen, onClose }: EarlyAccessModalProps) {
     if (!isOpen) return;
 
     trackEvent('early_access_form_view', { form: 'early_access' });
+    trackEvent('waitlist_view', { page_path: window.location.pathname });
     previouslyFocused.current = document.activeElement as HTMLElement | null;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -101,6 +102,7 @@ export function EarlyAccessModal({ isOpen, onClose }: EarlyAccessModalProps) {
         const data = await res.json();
         if (res.ok && data.success) {
           trackEvent('early_access_success', { form: 'early_access' });
+          trackEvent('waitlist_submit', { page_path: window.location.pathname });
           setFormState('success');
         } else {
           trackEvent('early_access_error', { form: 'early_access', error_type: 'api' });

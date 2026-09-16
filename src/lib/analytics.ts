@@ -7,6 +7,10 @@ export interface ConsentRecord {
 }
 
 export type AnalyticsEvent =
+  | 'page_view'
+  | 'cta_click'
+  | 'waitlist_view'
+  | 'waitlist_submit'
   | 'nav_link_click'
   | 'primary_cta_click'
   | 'secondary_cta_click'
@@ -65,16 +69,24 @@ const SENSITIVE_KEYS = [
 ];
 
 /**
- * Returns true if analytics environment flag is enabled (or true by default if not set to false)
- * and a valid measurement ID is present.
+ * Returns the configured GA4 Measurement ID from environment variables.
+ * Priority: NEXT_PUBLIC_GA_MEASUREMENT_ID, fallback to VITE_GA_MEASUREMENT_ID.
+ */
+export function getMeasurementId(): string | undefined {
+  const id = import.meta.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || import.meta.env.VITE_GA_MEASUREMENT_ID;
+  return typeof id === 'string' && id.trim().length > 0 ? id.trim() : undefined;
+}
+
+/**
+ * Returns true if analytics environment flag is enabled and a valid measurement ID is present.
  */
 export function isAnalyticsEnabled(): boolean {
   const envFlag = import.meta.env.VITE_PUBLIC_ANALYTICS_ENABLED;
   if (envFlag === 'false' || envFlag === false) {
     return false;
   }
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-  return typeof measurementId === 'string' && measurementId.trim().length > 0;
+  const measurementId = getMeasurementId();
+  return Boolean(measurementId);
 }
 
 /**
@@ -136,10 +148,92 @@ export function getConsentRecord(): ConsentRecord {
   };
 }
 
+let isScriptLoaded = false;
+let isGAConfigured = false;
+
+/**
+ * Dynamically injects Google Analytics tag script into document head if not already loaded.
+ */
+export function loadGAScript(measurementId: string): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const scriptId = 'ga4-gtag-script';
+  if (document.getElementById(scriptId)) {
+    isScriptLoaded = true;
+    return true;
+  }
+
+  try {
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+    document.head.appendChild(script);
+    isScriptLoaded = true;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Configures GA4 config settings via gtag if not already configured.
+ */
+function configureGA4(measurementId: string) {
+  if (typeof window === 'undefined' || isGAConfigured) return;
+
+  (window as any).dataLayer = (window as any).dataLayer || [];
+  function gtag(...args: any[]) {
+    (window as any).dataLayer.push(args);
+  }
+
+  gtag('js', new Date());
+  gtag('config', measurementId, {
+    send_page_view: false,
+    anonymize_ip: true,
+  });
+
+  isGAConfigured = true;
+}
+
+/**
+ * Applies Google Consent Mode update via gtag and initializes script if consent was newly granted.
+ */
+export function updateAnalyticsConsent(granted: boolean) {
+  if (typeof window === 'undefined') return;
+
+  // Ensure dataLayer exists
+  (window as any).dataLayer = (window as any).dataLayer || [];
+  function gtag(...args: any[]) {
+    (window as any).dataLayer.push(args);
+  }
+
+  gtag('consent', 'update', {
+    analytics_storage: granted ? 'granted' : 'denied',
+  });
+
+  if (granted && isAnalyticsEnabled()) {
+    const measurementId = getMeasurementId();
+    if (measurementId) {
+      loadGAScript(measurementId);
+      configureGA4(measurementId);
+      // Flush current route pageview if not already tracked
+      if (lastTrackedPath) {
+        const currentPath = lastTrackedPath;
+        lastTrackedPath = null;
+        trackPageView(currentPath);
+      }
+    }
+  }
+}
+
 /**
  * Updates stored consent record and applies Google Consent Mode update.
  */
-export function setConsentRecord(analytics: boolean, state: 'accepted' | 'rejected' | 'customized' = analytics ? 'accepted' : 'rejected'): ConsentRecord {
+export function setConsentRecord(
+  analytics: boolean,
+  state: 'accepted' | 'rejected' | 'customized' = analytics ? 'accepted' : 'rejected'
+): ConsentRecord {
   const record: ConsentRecord = {
     version: CURRENT_VERSION,
     state,
@@ -164,23 +258,6 @@ export function setConsentRecord(analytics: boolean, state: 'accepted' | 'reject
   return record;
 }
 
-/**
- * Applies Google Consent Mode update via gtag.
- */
-export function updateAnalyticsConsent(granted: boolean) {
-  if (typeof window === 'undefined') return;
-
-  // Ensure dataLayer exists
-  (window as any).dataLayer = (window as any).dataLayer || [];
-  function gtag(...args: any[]) {
-    (window as any).dataLayer.push(args);
-  }
-
-  gtag('consent', 'update', {
-    analytics_storage: granted ? 'granted' : 'denied',
-  });
-}
-
 let isInitialized = false;
 
 /**
@@ -191,22 +268,24 @@ export function initAnalytics() {
   if (typeof window === 'undefined' || isInitialized) return;
 
   const consentRecord = getConsentRecord();
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  const measurementId = getMeasurementId();
 
-  // Setup dataLayer and baseline gtag helper function
+  // 1. Setup dataLayer and baseline gtag helper function
   (window as any).dataLayer = (window as any).dataLayer || [];
   function gtag(...args: any[]) {
     (window as any).dataLayer.push(args);
   }
   (window as any).gtag = gtag;
 
-  // 1. Establish conservative Google Consent Mode defaults BEFORE loading GA script
+  // 2. Establish conservative Google Consent Mode defaults BEFORE loading GA script
   gtag('consent', 'default', {
     analytics_storage: consentRecord.analytics ? 'granted' : 'denied',
     ad_storage: 'denied',
     ad_user_data: 'denied',
     ad_personalization: 'denied',
   });
+
+  isInitialized = true;
 
   if (!isAnalyticsEnabled() || !measurementId) {
     if (import.meta.env.DEV) {
@@ -215,24 +294,11 @@ export function initAnalytics() {
     return;
   }
 
-  // 2. Inject Google Tag script dynamically if not already present
-  const scriptId = 'ga4-gtag-script';
-  if (!document.getElementById(scriptId)) {
-    const script = document.createElement('script');
-    script.id = scriptId;
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
-    document.head.appendChild(script);
+  // 3. Inject GA script AND configure GA4 ONLY IF user has explicitly granted analytics consent
+  if (consentRecord.analytics) {
+    loadGAScript(measurementId);
+    configureGA4(measurementId);
   }
-
-  // 3. Configure GA4 without sending automatic pageviews (SPA route changes tracked explicitly)
-  gtag('js', new Date());
-  gtag('config', measurementId, {
-    send_page_view: false,
-    anonymize_ip: true,
-  });
-
-  isInitialized = true;
 }
 
 let lastTrackedPath: string | null = null;
@@ -243,13 +309,18 @@ let lastTrackedPath: string | null = null;
  */
 export function trackPageView(path: string, title?: string) {
   const consent = getConsentRecord();
-  if (!consent.analytics || !isAnalyticsEnabled()) return;
+  if (!consent.analytics || !isAnalyticsEnabled()) {
+    lastTrackedPath = path;
+    return;
+  }
 
   // Prevent duplicate consecutive pageviews
-  if (lastTrackedPath === path) return;
+  if (lastTrackedPath === path && isGAConfigured) return;
   lastTrackedPath = path;
 
-  const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+  const measurementId = getMeasurementId();
+  if (!measurementId) return;
+
   if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', 'page_view', {
       page_path: path,
@@ -260,6 +331,18 @@ export function trackPageView(path: string, title?: string) {
   } else if (import.meta.env.DEV) {
     console.log(`[Analytics PageView] ${path}`);
   }
+}
+
+/**
+ * Helper function to defensively test if a string value looks like an email or phone number.
+ */
+function isPossiblePII(value: unknown): boolean {
+  if (typeof value !== 'string') return false;
+  // Simple check for email format
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return true;
+  // Simple check for phone number format (digits with optional +, -, (), spaces)
+  if (/^(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/.test(value.trim())) return true;
+  return false;
 }
 
 /**
@@ -274,7 +357,7 @@ export function trackEvent(event: AnalyticsEvent, payload?: Record<string, unkno
   const cleanPayload: Record<string, unknown> = {};
   if (payload) {
     for (const [key, value] of Object.entries(payload)) {
-      if (!SENSITIVE_KEYS.includes(key.toLowerCase())) {
+      if (!SENSITIVE_KEYS.includes(key.toLowerCase()) && !isPossiblePII(value)) {
         cleanPayload[key] = value;
       }
     }
@@ -286,4 +369,5 @@ export function trackEvent(event: AnalyticsEvent, payload?: Record<string, unkno
     console.log(`[Analytics Event] ${event}`, cleanPayload);
   }
 }
+
 

@@ -292,6 +292,7 @@ export function HeroSection({ onNavigate, onOpenEarlyAccess }: HeroSectionProps)
               <button
                 id="hero-cta-primary"
                 onClick={() => {
+                  trackEvent('cta_click', { cta_name: 'get_in_touch', location: 'hero', page_path: window.location.pathname });
                   trackEvent('primary_cta_click', { cta_name: 'get_in_touch', location: 'hero' });
                   onOpenEarlyAccess();
                 }}
@@ -304,6 +305,7 @@ export function HeroSection({ onNavigate, onOpenEarlyAccess }: HeroSectionProps)
               <button
                 id="hero-cta-secondary"
                 onClick={() => {
+                  trackEvent('cta_click', { cta_name: 'explore_aarogyadamu', location: 'hero', page_path: window.location.pathname });
                   trackEvent('secondary_cta_click', { cta_name: 'explore_aarogyadamu', location: 'hero' });
                   const el = document.getElementById('intelligence');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
