@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IconChevronDown, IconMail } from '../ui/CustomSvgIcons';
+import { IconChevronDown } from '../ui/CustomSvgIcons';
 
 export interface FaqItem {
   q: string;
@@ -44,11 +44,17 @@ export function renderFormattedText(text: string) {
   });
 }
 
+import { trackEvent } from '../../lib/analytics';
+
 export function FaqSection() {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   const toggleFaq = (idx: number) => {
-    setOpenIdx(openIdx === idx ? null : idx);
+    const isOpening = openIdx !== idx;
+    setOpenIdx(isOpening ? idx : null);
+    if (isOpening && FAQ_DATA[idx]) {
+      trackEvent('faq_open', { question_id: idx + 1, question_title: FAQ_DATA[idx].q });
+    }
   };
 
   return (

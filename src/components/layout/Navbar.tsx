@@ -34,9 +34,10 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleNavClick = (path: string) => {
+  const handleNavClick = (link: { label: string; path: string }) => {
     setMobileOpen(false);
-    onNavigate(path);
+    trackEvent('nav_link_click', { link_name: link.label, destination: link.path });
+    onNavigate(link.path);
   };
 
   return (
@@ -53,7 +54,10 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
 
           {/* Logo */}
           <button
-            onClick={() => onNavigate('/')}
+            onClick={() => {
+              trackEvent('nav_link_click', { link_name: 'home_logo', destination: '/' });
+              onNavigate('/');
+            }}
             className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
             aria-label="AarogyaDamu home"
           >
@@ -69,7 +73,7 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
               return (
                 <button
                   key={link.path}
-                  onClick={() => handleNavClick(link.path)}
+                  onClick={() => handleNavClick(link)}
                   className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                     isActive
                       ? 'text-foreground bg-surface font-semibold'
@@ -86,7 +90,7 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
           <div className="hidden lg:flex items-center gap-3">
             <button
               onClick={() => {
-                trackEvent('CTA_CLICKED', { source: 'navbar' });
+                trackEvent('primary_cta_click', { cta_name: 'get_in_touch', location: 'navbar' });
                 onOpenEarlyAccess();
               }}
               className="px-4 py-2 rounded-xl bg-foreground text-white text-sm font-semibold hover:bg-surface-dark-hover transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
@@ -125,7 +129,7 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
               {NAV_LINKS.map(link => (
                 <button
                   key={link.path}
-                  onClick={() => handleNavClick(link.path)}
+                  onClick={() => handleNavClick(link)}
                   className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground-muted hover:text-foreground rounded-xl hover:bg-surface transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   {link.label}
@@ -135,7 +139,7 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
                 <button
                   onClick={() => {
                     setMobileOpen(false);
-                    trackEvent('CTA_CLICKED', { source: 'navbar_mobile' });
+                    trackEvent('primary_cta_click', { cta_name: 'get_in_touch', location: 'navbar_mobile' });
                     onOpenEarlyAccess();
                   }}
                   className="w-full py-3 rounded-xl bg-foreground text-white text-sm font-semibold hover:bg-surface-dark-hover transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"

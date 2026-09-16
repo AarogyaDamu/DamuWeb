@@ -10,7 +10,7 @@ interface StickyMobileCtaProps {
 
 export function StickyMobileCta({ onOpenGetStarted, onOpenEarlyAccess }: StickyMobileCtaProps) {
   const handleClick = () => {
-    trackEvent('CTA_CLICKED', { source: 'sticky_mobile_cta' });
+    trackEvent('primary_cta_click', { cta_name: 'get_in_touch', location: 'sticky_mobile_cta' });
     const fn = onOpenEarlyAccess || onOpenGetStarted;
     if (fn) fn();
   };

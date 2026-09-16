@@ -57,7 +57,7 @@ export function FinalCtaSection({ onNavigate, onOpenEarlyAccess }: FinalCtaSecti
           <button
             id="final-cta-primary"
             onClick={() => {
-              trackEvent('CTA_CLICKED', { source: 'final_cta' });
+              trackEvent('primary_cta_click', { cta_name: 'get_in_touch', location: 'final_cta' });
               onOpenEarlyAccess();
             }}
             className="px-6 py-3.5 rounded-xl bg-foreground text-white text-sm font-semibold hover:bg-surface-dark-hover transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
@@ -68,6 +68,7 @@ export function FinalCtaSection({ onNavigate, onOpenEarlyAccess }: FinalCtaSecti
           <button
             id="final-cta-damu"
             onClick={() => {
+              trackEvent('secondary_cta_click', { cta_name: 'meet_damu', location: 'final_cta' });
               const el = document.getElementById('damu');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
@@ -87,6 +88,7 @@ export function FinalCtaSection({ onNavigate, onOpenEarlyAccess }: FinalCtaSecti
         >
           <a
             href="mailto:aarogyadamu@gmail.com"
+            onClick={() => trackEvent('outbound_link_click', { link_text: 'email', destination: 'mailto:aarogyadamu@gmail.com', source: 'final_cta' })}
             className="hover:text-foreground-muted transition-colors"
           >
             aarogyadamu@gmail.com

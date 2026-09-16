@@ -292,7 +292,7 @@ export function HeroSection({ onNavigate, onOpenEarlyAccess }: HeroSectionProps)
               <button
                 id="hero-cta-primary"
                 onClick={() => {
-                  trackEvent('CTA_CLICKED', { source: 'hero_primary' });
+                  trackEvent('primary_cta_click', { cta_name: 'get_in_touch', location: 'hero' });
                   onOpenEarlyAccess();
                 }}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-foreground text-white text-sm font-semibold hover:bg-surface-dark-hover transition-colors duration-200 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -304,6 +304,7 @@ export function HeroSection({ onNavigate, onOpenEarlyAccess }: HeroSectionProps)
               <button
                 id="hero-cta-secondary"
                 onClick={() => {
+                  trackEvent('secondary_cta_click', { cta_name: 'explore_aarogyadamu', location: 'hero' });
                   const el = document.getElementById('intelligence');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}

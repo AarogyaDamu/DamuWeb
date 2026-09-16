@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
 import { IconArrowRight, IconActivity } from '../components/ui/CustomSvgIcons';
+import { trackEvent } from '../lib/analytics';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
   onOpenGetStarted: () => void;
 }
 
-export function NotFoundPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
+export function NotFoundPage({ onNavigate }: SubPageProps) {
+  useEffect(() => {
+    trackEvent('page_not_found', { path: window.location.pathname });
+  }, []);
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-md mx-auto text-center space-y-8">
       <SeoHead

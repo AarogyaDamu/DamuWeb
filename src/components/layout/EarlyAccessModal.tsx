@@ -26,6 +26,7 @@ export function EarlyAccessModal({ isOpen, onClose }: EarlyAccessModalProps) {
   useEffect(() => {
     if (!isOpen) return;
 
+    trackEvent('early_access_form_view', { form: 'early_access' });
     previouslyFocused.current = document.activeElement as HTMLElement | null;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -76,15 +77,17 @@ export function EarlyAccessModal({ isOpen, onClose }: EarlyAccessModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    trackEvent('early_access_submit', { form: 'early_access' });
+
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      trackEvent('early_access_error', { form: 'early_access', error_type: 'validation' });
       return;
     }
     setErrors({});
     setSubmitError('');
     setFormState('submitting');
-    trackEvent('CTA_CLICKED', { source: 'early_access_modal' });
 
     try {
       const res = await fetch('/api/early-access', {
@@ -97,19 +100,23 @@ export function EarlyAccessModal({ isOpen, onClose }: EarlyAccessModalProps) {
       if (contentType && contentType.includes('application/json')) {
         const data = await res.json();
         if (res.ok && data.success) {
+          trackEvent('early_access_success', { form: 'early_access' });
           setFormState('success');
         } else {
+          trackEvent('early_access_error', { form: 'early_access', error_type: 'api' });
           setFormState('error');
           setSubmitError(data.error || 'Unable to submit at this time. Please try again later.');
         }
       } else if (res.ok) {
-        // Safe fallback when running local dev server without Vercel serverless function proxy
+        trackEvent('early_access_success', { form: 'early_access' });
         setFormState('success');
       } else {
+        trackEvent('early_access_error', { form: 'early_access', error_type: 'api' });
         setFormState('error');
         setSubmitError('Unable to submit at this time. Please try again later.');
       }
     } catch {
+      trackEvent('early_access_error', { form: 'early_access', error_type: 'network' });
       setFormState('error');
       setSubmitError('Network error. Please check your internet connection and try again.');
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
 import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { IconArrowRight, IconAlertCircle } from '../components/ui/CustomSvgIcons';
@@ -32,15 +32,20 @@ export function ContactPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
     return errs;
   };
 
+  useEffect(() => {
+    trackEvent('contact_form_view', { form: 'contact' });
+  }, []);
+
   const [submitError, setSubmitError] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    trackEvent('CONTACT_FORM_STARTED');
+    trackEvent('contact_submit', { form: 'contact' });
 
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
+      trackEvent('contact_error', { form: 'contact', error_type: 'validation' });
       return;
     }
 
@@ -61,19 +66,22 @@ export function ContactPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       if (contentType && contentType.includes('application/json')) {
         const data = await res.json();
         if (res.ok && data.success) {
-          trackEvent('CONTACT_FORM_SUBMITTED');
+          trackEvent('contact_success', { form: 'contact' });
           onNavigate('/thank-you');
         } else {
+          trackEvent('contact_error', { form: 'contact', error_type: 'api' });
           setSubmitError(data.error || 'Failed to send message. Please try again later.');
         }
       } else if (res.ok) {
-        trackEvent('CONTACT_FORM_SUBMITTED');
+        trackEvent('contact_success', { form: 'contact' });
         onNavigate('/thank-you');
       } else {
+        trackEvent('contact_error', { form: 'contact', error_type: 'api' });
         setSubmitError('Failed to send message. Please try again later.');
       }
     } catch {
       setIsSubmitting(false);
+      trackEvent('contact_error', { form: 'contact', error_type: 'network' });
       setSubmitError('Network error. Please check your internet connection and try again.');
     }
   };

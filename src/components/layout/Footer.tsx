@@ -4,9 +4,10 @@ import { trackEvent } from '../../lib/analytics';
 
 interface FooterProps {
   onNavigate: (path: string) => void;
+  onOpenPrivacySettings?: () => void;
 }
 
-export function Footer({ onNavigate }: FooterProps) {
+export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -37,7 +38,10 @@ export function Footer({ onNavigate }: FooterProps) {
           {/* Brand */}
           <div className="lg:col-span-2 space-y-4">
             <button
-              onClick={() => onNavigate('/')}
+              onClick={() => {
+                trackEvent('nav_link_click', { link_name: 'home_brand', destination: '/' });
+                onNavigate('/');
+              }}
               className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
               aria-label="AarogyaDamu home"
             >
@@ -47,7 +51,7 @@ export function Footer({ onNavigate }: FooterProps) {
             </button>
             <a
               href="mailto:aarogyadamu@gmail.com"
-              onClick={() => trackEvent('EMAIL_CTA_CLICKED', { source: 'footer' })}
+              onClick={() => trackEvent('outbound_link_click', { link_text: 'email', destination: 'mailto:aarogyadamu@gmail.com', source: 'footer' })}
               className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition-colors"
               aria-label="Email AarogyaDamu"
             >
@@ -69,6 +73,7 @@ export function Footer({ onNavigate }: FooterProps) {
                 <li key={link.href}>
                   <button
                     onClick={() => {
+                      trackEvent('nav_link_click', { link_name: link.label, destination: link.href });
                       if (link.isRoute) {
                         onNavigate(link.href);
                       } else {
@@ -94,7 +99,10 @@ export function Footer({ onNavigate }: FooterProps) {
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => onNavigate('/privacy')}
+                  onClick={() => {
+                    trackEvent('nav_link_click', { link_name: 'Privacy', destination: '/privacy' });
+                    onNavigate('/privacy');
+                  }}
                   className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
                 >
                   Privacy
@@ -102,7 +110,10 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li>
                 <button
-                  onClick={() => onNavigate('/terms')}
+                  onClick={() => {
+                    trackEvent('nav_link_click', { link_name: 'Terms', destination: '/terms' });
+                    onNavigate('/terms');
+                  }}
                   className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
                 >
                   Terms
@@ -110,10 +121,25 @@ export function Footer({ onNavigate }: FooterProps) {
               </li>
               <li>
                 <button
-                  onClick={() => onNavigate('/security')}
+                  onClick={() => {
+                    trackEvent('nav_link_click', { link_name: 'Security', destination: '/security' });
+                    onNavigate('/security');
+                  }}
                   className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
                 >
                   Security
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    if (onOpenPrivacySettings) {
+                      onOpenPrivacySettings();
+                    }
+                  }}
+                  className="text-sm text-accent/80 hover:text-accent font-medium transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded underline underline-offset-2"
+                >
+                  Privacy Settings
                 </button>
               </li>
             </ul>

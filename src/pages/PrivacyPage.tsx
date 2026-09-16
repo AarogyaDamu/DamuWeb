@@ -55,10 +55,16 @@ export function PrivacyPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
         </section>
 
         <section className="space-y-2">
-          <h2 className="font-serif text-lg font-bold text-foreground">4. Analytics and Cookies</h2>
+          <h2 className="font-serif text-lg font-bold text-foreground">4. Analytics, Storage and Consent Management</h2>
           <p>
-            We use privacy-conscious analytics to understand aggregate traffic and improve site usability. Non-essential analytics scripts remain disabled by default until you grant consent via our cookie notification. You can modify your preferences at any time by clearing your browser storage or updating your choice.
+            We use Google Analytics 4 (GA4) web tagging to collect aggregate, non-identifying technical metadata (such as page views and button interaction events) to understand visitor traffic and improve site usability.
           </p>
+          <ul className="list-disc list-inside space-y-1.5 pl-2">
+            <li><strong>Google Consent Mode v2:</strong> All analytics storage and advertising tracking categories (`analytics_storage`, `ad_storage`, `ad_user_data`, `ad_personalization`) default to <em>denied</em> prior to your explicit selection.</li>
+            <li><strong>Consent Record Storage:</strong> Your privacy choices are stored locally in your browser (`aarogyadamu_consent_v1`). Necessary functionality operates without analytics consent.</li>
+            <li><strong>Modifying Preferences:</strong> You can enable or disable analytics at any time by clicking the <strong>Privacy Settings</strong> link located in the website footer. When analytics is disabled, future telemetry transmission is immediately stopped.</li>
+            <li><strong>Strict Health Data Boundary:</strong> Absolutely no health records, clinical diagnoses, medical symptoms, prescriptions, ABHA identifiers, or personal contact form contents are ever sent to Google Analytics.</li>
+          </ul>
         </section>
 
         <section className="space-y-2">

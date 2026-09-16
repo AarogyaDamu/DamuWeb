@@ -15,20 +15,34 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { ThankYouPage } from './pages/ThankYouPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { initAnalytics, trackPageView } from './lib/analytics';
 
 export function App() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
     return window.location.pathname || '/';
   });
   const [isEarlyAccessOpen, setIsEarlyAccessOpen] = useState<boolean>(false);
+  const [isPrivacySettingsOpen, setIsPrivacySettingsOpen] = useState<boolean>(false);
 
+  // 1. Initialize analytics & consent mode early
+  useEffect(() => {
+    initAnalytics();
+  }, []);
+
+  // 2. Listen to popstate (back/forward) and update currentPath
   useEffect(() => {
     const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname || '/');
+      const path = window.location.pathname || '/';
+      setCurrentPath(path);
     };
     window.addEventListener('popstate', handleLocationChange);
     return () => window.removeEventListener('popstate', handleLocationChange);
   }, []);
+
+  // 3. Track SPA pageviews cleanly on route changes
+  useEffect(() => {
+    trackPageView(currentPath);
+  }, [currentPath]);
 
   const navigate = (path: string) => {
     if (path.startsWith('/#')) {
@@ -103,9 +117,16 @@ export function App() {
           {renderPage()}
         </main>
 
-        <Footer onNavigate={navigate} />
+        <Footer
+          onNavigate={navigate}
+          onOpenPrivacySettings={() => setIsPrivacySettingsOpen(true)}
+        />
 
-        <CookieBanner />
+        <CookieBanner
+          isPreferencesOpen={isPrivacySettingsOpen}
+          onClosePreferences={() => setIsPrivacySettingsOpen(false)}
+          onNavigate={navigate}
+        />
 
         {!hideStickyCta && (
           <StickyMobileCta onNavigate={navigate} onOpenEarlyAccess={() => setIsEarlyAccessOpen(true)} />
