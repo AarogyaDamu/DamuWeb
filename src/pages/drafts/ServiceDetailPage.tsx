@@ -113,7 +113,7 @@ export function ServiceDetailPage({ serviceId, onNavigate, onOpenGetStarted }: S
       '@type': 'Organization',
       name: 'AarogyaDamu',
       url: 'https://aarogyadamu.com',
-      email: 'aarogyadamu@gmail.com',
+      email: 'contact@aarogyadamu.com',
     },
     description: serviceDetails.metaDesc,
   };
@@ -201,7 +201,7 @@ export function ServiceDetailPage({ serviceId, onNavigate, onOpenGetStarted }: S
             Get started with UIN
           </button>
           <a
-            href="mailto:aarogyadamu@gmail.com"
+            href="mailto:contact@aarogyadamu.com"
             onClick={() => trackEvent('EMAIL_CTA_CLICKED', { source: `service_${serviceId}` })}
             className="w-full sm:w-auto px-6 py-3 bg-surface/10 hover:bg-surface/20 text-surface font-semibold text-xs rounded-xl inline-flex items-center justify-center gap-1.5"
           >

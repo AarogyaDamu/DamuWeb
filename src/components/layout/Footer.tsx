@@ -13,7 +13,7 @@ export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
     '@type': 'Organization',
     name: 'AarogyaDamu',
     url: 'https://aarogyadamu.com',
-    email: 'aarogyadamu@gmail.com',
+    email: 'contact@aarogyadamu.com',
     description: 'Personal Health Intelligence - connecting your healthcare life into continuously useful health context.',
     address: {
       '@type': 'PostalAddress',
@@ -50,13 +50,13 @@ export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
               </span>
             </button>
             <a
-              href="mailto:aarogyadamu@gmail.com"
-              onClick={() => trackEvent('outbound_link_click', { link_text: 'email', destination: 'mailto:aarogyadamu@gmail.com', source: 'footer' })}
+              href="mailto:contact@aarogyadamu.com"
+              onClick={() => trackEvent('outbound_link_click', { link_text: 'email', destination: 'mailto:contact@aarogyadamu.com', source: 'footer' })}
               className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition-colors"
               aria-label="Email AarogyaDamu"
             >
               <IconMail className="w-3.5 h-3.5 text-accent" />
-              aarogyadamu@gmail.com
+              contact@aarogyadamu.com
             </a>
           </div>
 

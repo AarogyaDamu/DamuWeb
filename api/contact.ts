@@ -136,7 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 1. Try Email dispatch via Resend if RESEND_API_KEY is configured
     const resendKey = process.env.RESEND_API_KEY;
-    const recipientEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'aarogyadamu@gmail.com';
+    const recipientEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'contact@aarogyadamu.com';
 
     if (resendKey) {
       const emailSubject = `[Website Contact] ${subject}`;
@@ -191,7 +191,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error(`[Contact API] No delivery provider configured (Resend/Supabase); message NOT stored. reqId=${requestId}`);
       return res.status(503).json({
         success: false,
-        error: 'Our contact system is being set up. Please email us directly at aarogyadamu@gmail.com.',
+        error: 'Our contact system is being set up. Please email us directly at contact@aarogyadamu.com.',
         requestId,
       });
     }
@@ -199,7 +199,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error(`[Contact API] All delivery attempts failed. emailSent=${emailSent}, dbStored=${dbStored}, reqId=${requestId}`);
     return res.status(500).json({
       success: false,
-      error: 'Unable to deliver message at this time. Please try emailing directly at aarogyadamu@gmail.com.',
+      error: 'Unable to deliver message at this time. Please try emailing directly at contact@aarogyadamu.com.',
       requestId,
     });
   } catch (err) {

@@ -32,7 +32,7 @@ export function ThankYouPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <div className="p-5 rounded-2xl bg-surface border border-foreground/10 text-xs text-foreground-muted space-y-2 shadow-subtle">
         <div className="font-semibold text-foreground">What happens next</div>
         <p className="text-foreground-muted">
-          Our team reviews inquiries and typically replies within a few business days from <a href="mailto:aarogyadamu@gmail.com" className="text-accent font-mono hover:underline">aarogyadamu@gmail.com</a>. Please add this address to your contacts so our reply doesn't land in spam.
+          Our team reviews inquiries and typically replies within a few business days from <a href="mailto:contact@aarogyadamu.com" className="text-accent font-mono hover:underline">contact@aarogyadamu.com</a>. Please add this address to your contacts so our reply doesn't land in spam.
         </p>
       </div>
 

@@ -94,7 +94,7 @@ export function ContactPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
     mainEntity: {
       '@type': 'Organization',
       name: 'AarogyaDamu',
-      email: 'aarogyadamu@gmail.com',
+      email: 'contact@aarogyadamu.com',
       url: 'https://aarogyadamu.com',
     },
   };
@@ -103,7 +103,7 @@ export function ContactPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-12">
       <SeoHead
         title="Get in Touch - AarogyaDamu Engineering Team"
-        description="Contact the AarogyaDamu health technology team for product inquiries, doctor integrations, and technical support. Email: aarogyadamu@gmail.com"
+        description="Contact the AarogyaDamu health technology team for product inquiries, doctor integrations, and technical support. Email: contact@aarogyadamu.com"
         canonicalUrl="https://aarogyadamu.com/contact"
         schemaJson={contactSchema}
       />

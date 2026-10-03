@@ -71,7 +71,7 @@ export function PrivacyPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
           <h2 className="font-serif text-lg font-bold text-foreground">5. Data Retention and User Rights</h2>
           <p>
             We retain contact submissions and early access signups only for as long as necessary to communicate with you regarding product updates or answer your support requests. 
-            You have the right to request access to, correction of, or deletion of your contact details at any time by emailing us at <a href="mailto:aarogyadamu@gmail.com" className="text-accent hover:underline font-mono">aarogyadamu@gmail.com</a>.
+            You have the right to request access to, correction of, or deletion of your contact details at any time by emailing us at <a href="mailto:contact@aarogyadamu.com" className="text-accent hover:underline font-mono">contact@aarogyadamu.com</a>.
           </p>
         </section>
 
@@ -85,7 +85,7 @@ export function PrivacyPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
         <section className="space-y-2">
           <h2 className="font-serif text-lg font-bold text-foreground">7. Updates and Contact Information</h2>
           <p>
-            We may update this Privacy Policy periodically to reflect improvements in our practices. For any privacy questions or requests, please contact our privacy contact at <a href="mailto:aarogyadamu@gmail.com" className="text-accent hover:underline font-mono">aarogyadamu@gmail.com</a>.
+            We may update this Privacy Policy periodically to reflect improvements in our practices. For any privacy questions or requests, please contact our privacy contact at <a href="mailto:contact@aarogyadamu.com" className="text-accent hover:underline font-mono">contact@aarogyadamu.com</a>.
           </p>
         </section>
       </div>

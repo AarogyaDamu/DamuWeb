@@ -89,11 +89,11 @@ export function FinalCtaSection({ onNavigate, onOpenEarlyAccess }: FinalCtaSecti
           transition={{ duration: 0.4, delay: 0.5 }}
         >
           <a
-            href="mailto:aarogyadamu@gmail.com"
-            onClick={() => trackEvent('outbound_link_click', { link_text: 'email', destination: 'mailto:aarogyadamu@gmail.com', source: 'final_cta' })}
+            href="mailto:contact@aarogyadamu.com"
+            onClick={() => trackEvent('outbound_link_click', { link_text: 'email', destination: 'mailto:contact@aarogyadamu.com', source: 'final_cta' })}
             className="hover:text-foreground-muted transition-colors"
           >
-            aarogyadamu@gmail.com
+            contact@aarogyadamu.com
           </a>
         </motion.div>
       </div>

@@ -53,7 +53,7 @@ export function SecurityPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
         <section className="space-y-2">
           <h2 className="font-serif text-lg font-bold text-foreground">5. Responsible Vulnerability Disclosure</h2>
           <p>
-            If you believe you have discovered a potential security vulnerability in any AarogyaDamu service, please report it to our engineering team at <a href="mailto:aarogyadamu@gmail.com" className="text-accent hover:underline font-mono">aarogyadamu@gmail.com</a>. We review all submissions promptly.
+            If you believe you have discovered a potential security vulnerability in any AarogyaDamu service, please report it to our engineering team at <a href="mailto:contact@aarogyadamu.com" className="text-accent hover:underline font-mono">contact@aarogyadamu.com</a>. We review all submissions promptly.
           </p>
         </section>
       </div>

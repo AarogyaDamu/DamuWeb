@@ -88,7 +88,7 @@ VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
 
 SUPABASE_SECRET_KEY=YOUR_SERVER_SECRET
 RESEND_API_KEY=YOUR_RESEND_API_KEY
-CONTACT_NOTIFICATION_EMAIL=aarogyadamu@gmail.com
+CONTACT_NOTIFICATION_EMAIL=contact@aarogyadamu.com
 ```
 
 Do not commit `.env.local`.
@@ -307,7 +307,7 @@ Server-side functions should use the Supabase server secret where privileged dat
 Resend is used for server-side delivery of website inquiries.
 
 - **Required variable**: `RESEND_API_KEY=YOUR_RESEND_API_KEY`
-- **Notification destination**: `CONTACT_NOTIFICATION_EMAIL=aarogyadamu@gmail.com`
+- **Notification destination**: `CONTACT_NOTIFICATION_EMAIL=contact@aarogyadamu.com`
 
 ### Domain verification
 

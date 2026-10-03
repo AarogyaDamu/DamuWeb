@@ -145,7 +145,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 5. Try sending Email via Resend if RESEND_API_KEY is configured
     const resendKey = process.env.RESEND_API_KEY;
-    const recipientEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'aarogyadamu@gmail.com';
+    const recipientEmail = process.env.CONTACT_NOTIFICATION_EMAIL || 'contact@aarogyadamu.com';
 
     if (resendKey) {
       const subject = `[AarogyaDamu Waitlist] ${name ? name : email}`;
@@ -201,7 +201,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error(`[EarlyAccess API] No delivery provider configured. reqId=${requestId}`);
       return res.status(503).json({
         success: false,
-        error: "Early access sign-ups are being set up. Please email us directly at aarogyadamu@gmail.com.",
+        error: "Early access sign-ups are being set up. Please email us directly at contact@aarogyadamu.com.",
         requestId,
       });
     }
@@ -209,7 +209,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error(`[EarlyAccess API] All delivery attempts failed. emailSent=${emailSent}, dbStored=${dbStored}, reqId=${requestId}`);
     return res.status(500).json({
       success: false,
-      error: 'Unable to process your request at this time. Please try again later or email us directly at aarogyadamu@gmail.com.',
+      error: 'Unable to process your request at this time. Please try again later or email us directly at contact@aarogyadamu.com.',
       requestId,
     });
   } catch (err) {

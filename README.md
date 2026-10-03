@@ -60,5 +60,5 @@ npm run preview
 
 ## Contact & Support
 
-- **General Inquiries**: [aarogyadamu@gmail.com](mailto:aarogyadamu@gmail.com)
+- **General Inquiries**: [contact@aarogyadamu.com](mailto:contact@aarogyadamu.com)
 - **Deployment Documentation**: See [DEPLOYMENT.md](./DEPLOYMENT.md)

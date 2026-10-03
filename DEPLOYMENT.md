@@ -104,7 +104,7 @@ Configure the following environment variables in the **Vercel Project Settings â
 - `UPSTASH_REDIS_REST_URL`: `https://your-instance.upstash.io` (Used for durable IP rate limiting across serverless function instances)
 - `UPSTASH_REDIS_REST_TOKEN`: `your-upstash-rest-token`
 - `RESEND_API_KEY`: `re_...` (Optional: used by `api/contact.ts` for email notification dispatch)
-- `CONTACT_NOTIFICATION_EMAIL`: `aarogyadamu@gmail.com`
+- `CONTACT_NOTIFICATION_EMAIL`: `contact@aarogyadamu.com`
 
 ---
 
