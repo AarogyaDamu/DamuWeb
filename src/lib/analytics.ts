@@ -182,7 +182,8 @@ function configureGA4(measurementId: string) {
 
   (window as any).dataLayer = (window as any).dataLayer || [];
   function gtag(...args: any[]) {
-    (window as any).dataLayer.push(args);
+    // eslint-disable-next-line prefer-rest-params
+    (window as any).dataLayer.push(arguments);
   }
 
   gtag('js', new Date());
@@ -203,7 +204,8 @@ export function updateAnalyticsConsent(granted: boolean) {
   // Ensure dataLayer exists
   (window as any).dataLayer = (window as any).dataLayer || [];
   function gtag(...args: any[]) {
-    (window as any).dataLayer.push(args);
+    // eslint-disable-next-line prefer-rest-params
+    (window as any).dataLayer.push(arguments);
   }
 
   gtag('consent', 'update', {
@@ -271,7 +273,8 @@ export function initAnalytics() {
   // 1. Setup dataLayer and baseline gtag helper function
   (window as any).dataLayer = (window as any).dataLayer || [];
   function gtag(...args: any[]) {
-    (window as any).dataLayer.push(args);
+    // eslint-disable-next-line prefer-rest-params
+    (window as any).dataLayer.push(arguments);
   }
   (window as any).gtag = gtag;
 
