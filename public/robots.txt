@@ -6,4 +6,4 @@ Allow: /
 Disallow: /thank-you
 Disallow: /404
 
-Sitemap: https://aarogyadamu.com/sitemap.xml
+Sitemap: https://www.aarogyadamu.com/sitemap.xml
