@@ -70,10 +70,9 @@ const SENSITIVE_KEYS = [
 
 /**
  * Returns the configured GA4 Measurement ID from environment variables.
- * Priority: NEXT_PUBLIC_GA_MEASUREMENT_ID, fallback to VITE_GA_MEASUREMENT_ID.
  */
 export function getMeasurementId(): string | undefined {
-  const id = import.meta.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || import.meta.env.VITE_GA_MEASUREMENT_ID;
+  const id = import.meta.env.VITE_GA_MEASUREMENT_ID;
   return typeof id === 'string' && id.trim().length > 0 ? id.trim() : undefined;
 }
 
@@ -85,8 +84,7 @@ export function isAnalyticsEnabled(): boolean {
   if (envFlag === 'false' || envFlag === false) {
     return false;
   }
-  const measurementId = getMeasurementId();
-  return Boolean(measurementId);
+  return Boolean(getMeasurementId());
 }
 
 /**
