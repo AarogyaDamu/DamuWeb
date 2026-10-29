@@ -29,7 +29,7 @@ const STAGES = [
 ];
 
 function StageVisual({ visual, active }: { visual: string; active: boolean }) {
-  const reduced = useReducedMotion();
+  const _reduced = useReducedMotion();
 
   if (visual === 'scattered') {
     return (

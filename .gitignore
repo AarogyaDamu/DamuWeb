@@ -31,3 +31,7 @@ private_keys
 *.njsproj
 *.sln
 *.sw?
+
+.vercel
+.env*
+!.env.example

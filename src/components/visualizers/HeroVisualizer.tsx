@@ -18,7 +18,7 @@ export function HeroVisualizer() {
       setActiveStage((prev) => (prev + 1) % stages.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, []);
+  }, [stages.length]);
 
   const fragmentedData = [
     { type: 'Lab Report', label: 'HbA1c: 6.8%', icon: IconFileText, color: 'text-amber-700 border-amber-200 bg-amber-50' },
