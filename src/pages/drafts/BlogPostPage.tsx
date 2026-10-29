@@ -77,7 +77,7 @@ export function BlogPostPage({ slug, onNavigate, onOpenGetStarted }: BlogPostPag
       name: 'AarogyaDamu',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://aarogyadamu.com/favicon.svg',
+        url: 'https://aarogyadamu.com/android-chrome-512x512.png',
       },
     },
     datePublished: '2026-08-15',

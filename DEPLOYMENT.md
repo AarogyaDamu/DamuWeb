@@ -146,8 +146,8 @@ The site is coded to run at `https://aarogyadamu.com` (canonical URLs, sitemap, 
 
 The following assets live in `public/` and are referenced by `index.html` / `site.webmanifest`:
 
-- `favicon.svg`, `favicon-32.png`, `favicon-16.png` — browser tab icons.
-- `apple-touch-icon.png` (180×180), `icon-192.png`, `icon-512.png` — iOS home screen + PWA icons.
+- `favicon.ico`, `favicon-32x32.png`, `favicon-16x16.png` — browser tab icons.
+- `apple-touch-icon.png` (180×180), `android-chrome-192x192.png`, `android-chrome-512x512.png` — iOS home screen + PWA icons.
 - `og-image.png` (1200×630) — social preview for LinkedIn, WhatsApp, X, Facebook, Slack, iMessage.
 - `site.webmanifest` — PWA metadata.
 

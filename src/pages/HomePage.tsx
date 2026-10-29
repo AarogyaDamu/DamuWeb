@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
 import { HeroSection } from '../components/sections/HeroSection';
 import { IntelligenceCapabilities } from '../components/sections/IntelligenceCapabilities';
@@ -32,6 +32,9 @@ export function HomePage({ onNavigate, onOpenEarlyAccess }: HomePageProps) {
       {/* 1. Personal Health Intelligence & Health Vault Unified Hero */}
       <HeroSection onNavigate={onNavigate} onOpenEarlyAccess={openEarlyAccess} />
 
+      {/* 2. Damu Companion */}
+      <DamuCompanion />
+
       {/* 3. Intelligence Capabilities */}
       <IntelligenceCapabilities />
 
@@ -43,9 +46,6 @@ export function HomePage({ onNavigate, onOpenEarlyAccess }: HomePageProps) {
 
       {/* 6. Everyday Health */}
       <EverydayHealth />
-
-      {/* 7. Damu */}
-      <DamuCompanion />
 
       {/* 8. Global Vision */}
       <GlobalVisionSection />

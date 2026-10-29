@@ -12,7 +12,7 @@ export function SeoHead({
   title,
   description,
   canonicalUrl,
-  ogImage = 'https://aarogyadamu.com/og-image.png',
+  ogImage = 'https://www.aarogyadamu.com/og-image.png',
   schemaJson,
 }: SeoProps) {
   const fullCanonical = canonicalUrl || (typeof window !== 'undefined' ? window.location.href : 'https://aarogyadamu.com');

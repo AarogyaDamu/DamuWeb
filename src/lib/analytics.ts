@@ -146,7 +146,7 @@ export function getConsentRecord(): ConsentRecord {
   };
 }
 
-let isScriptLoaded = false;
+let _isScriptLoaded = false;
 let isGAConfigured = false;
 
 /**
@@ -157,7 +157,7 @@ export function loadGAScript(measurementId: string): boolean {
 
   const scriptId = 'ga4-gtag-script';
   if (document.getElementById(scriptId)) {
-    isScriptLoaded = true;
+    _isScriptLoaded = true;
     return true;
   }
 
@@ -167,7 +167,7 @@ export function loadGAScript(measurementId: string): boolean {
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
     document.head.appendChild(script);
-    isScriptLoaded = true;
+    _isScriptLoaded = true;
     return true;
   } catch {
     return false;
@@ -181,7 +181,7 @@ function configureGA4(measurementId: string) {
   if (typeof window === 'undefined' || isGAConfigured) return;
 
   (window as any).dataLayer = (window as any).dataLayer || [];
-  function gtag(...args: any[]) {
+  function gtag(..._args: any[]) {
     // eslint-disable-next-line prefer-rest-params
     (window as any).dataLayer.push(arguments);
   }
@@ -203,7 +203,7 @@ export function updateAnalyticsConsent(granted: boolean) {
 
   // Ensure dataLayer exists
   (window as any).dataLayer = (window as any).dataLayer || [];
-  function gtag(...args: any[]) {
+  function gtag(..._args: any[]) {
     // eslint-disable-next-line prefer-rest-params
     (window as any).dataLayer.push(arguments);
   }
@@ -272,7 +272,7 @@ export function initAnalytics() {
 
   // 1. Setup dataLayer and baseline gtag helper function
   (window as any).dataLayer = (window as any).dataLayer || [];
-  function gtag(...args: any[]) {
+  function gtag(..._args: any[]) {
     // eslint-disable-next-line prefer-rest-params
     (window as any).dataLayer.push(arguments);
   }
