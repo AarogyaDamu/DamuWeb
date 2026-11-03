@@ -109,14 +109,6 @@ export function createDamuScene(
   let lastTime: number | null = null;
   let waveStarted = -10;
 
-  // Drag interaction state
-  let isDragging = false;
-  let hasDragged = false;
-  let dragStartX = 0;
-  let dragStartY = 0;
-  let userDragAngle = 0;
-  let targetUserDragAngle = 0;
-
   let renderer: WebGLRenderer;
   try {
     renderer = new WebGLRenderer({
@@ -145,7 +137,8 @@ export function createDamuScene(
   renderer.domElement.style.width = '100%';
   renderer.domElement.style.height = '100%';
   renderer.domElement.style.display = 'block';
-  renderer.domElement.style.touchAction = 'none';
+  renderer.domElement.style.touchAction = 'pan-y';
+  renderer.domElement.style.cursor = 'pointer';
 
   host.appendChild(renderer.domElement);
 
@@ -582,19 +575,11 @@ export function createDamuScene(
     elapsed += delta;
     const t = elapsed;
 
-    // Smoothly damp user drag angle towards target
-    userDragAngle += (targetUserDragAngle - userDragAngle) * 0.12;
-
-    // Gentle spring back towards center when released
-    if (!isDragging && Math.abs(targetUserDragAngle) > 0.001) {
-      targetUserDragAngle += (0 - targetUserDragAngle) * 0.02;
-    }
-
     // Flattering three-quarter view base angle (~9.5°)
     const baseAngleY = 0.16;
     const idleSwayY = reducedMotion ? 0 : Math.sin(t * 0.45) * 0.075;
     const pointerTurnY = pointer.x * 0.2;
-    const targetRotY = baseAngleY + userDragAngle + pointerTurnY + idleSwayY;
+    const targetRotY = baseAngleY + pointerTurnY + idleSwayY;
     character.rotation.y += (targetRotY - character.rotation.y) * 0.06;
 
     const idleBobZ = reducedMotion ? 0 : Math.sin(t * 0.8) * 0.018;
@@ -668,68 +653,19 @@ export function createDamuScene(
   });
   visibilityObserver.observe(host);
 
-  // Pointer & Drag handlers
-  const onPointerDown = (event: PointerEvent) => {
-    if (paused) return;
-    isDragging = true;
-    hasDragged = false;
-    dragStartX = event.clientX;
-    dragStartY = event.clientY;
-    try {
-      (event.target as HTMLElement)?.setPointerCapture?.(event.pointerId);
-    } catch {
-      // Ignore fallback
-    }
-  };
-
+  // Pointer & interaction handlers
   const onPointerMove = (event: PointerEvent) => {
-    if (paused) return;
+    if (paused || event.pointerType !== 'mouse') return;
     const rect = host.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
     }
-
-    if (isDragging) {
-      const deltaX = event.clientX - dragStartX;
-      const deltaY = event.clientY - dragStartY;
-      if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
-        hasDragged = true;
-      }
-      const sensitivity = 2.4 / Math.max(rect.width, 240);
-      targetUserDragAngle = Math.max(
-        -1.15,
-        Math.min(1.15, targetUserDragAngle + deltaX * sensitivity)
-      );
-      dragStartX = event.clientX;
-      dragStartY = event.clientY;
-    }
-  };
-
-  const onPointerUp = (event: PointerEvent) => {
-    if (isDragging) {
-      isDragging = false;
-      try {
-        (event.target as HTMLElement)?.releasePointerCapture?.(event.pointerId);
-      } catch {
-        // Ignore
-      }
-      // If user tapped without dragging, trigger friendly wave!
-      if (!hasDragged) {
-        waveStarted = elapsed;
-      }
-    }
-  };
-
-  const onPointerCancel = () => {
-    isDragging = false;
   };
 
   const leave = () => {
-    if (!isDragging) {
-      pointer.x = 0;
-      pointer.y = 0;
-    }
+    pointer.x = 0;
+    pointer.y = 0;
   };
 
   const contextLost = (event: Event) => {
@@ -739,10 +675,7 @@ export function createDamuScene(
     onError?.(new Error('WebGL context lost'));
   };
 
-  host.addEventListener('pointerdown', onPointerDown);
   host.addEventListener('pointermove', onPointerMove);
-  host.addEventListener('pointerup', onPointerUp);
-  host.addEventListener('pointercancel', onPointerCancel);
   host.addEventListener('pointerleave', leave);
 
   renderer.domElement.addEventListener('webglcontextlost', contextLost);
@@ -771,10 +704,7 @@ export function createDamuScene(
       resizeObserver.disconnect();
       visibilityObserver.disconnect();
 
-      host.removeEventListener('pointerdown', onPointerDown);
       host.removeEventListener('pointermove', onPointerMove);
-      host.removeEventListener('pointerup', onPointerUp);
-      host.removeEventListener('pointercancel', onPointerCancel);
       host.removeEventListener('pointerleave', leave);
 
       renderer.domElement.removeEventListener('webglcontextlost', contextLost);
