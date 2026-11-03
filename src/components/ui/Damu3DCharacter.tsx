@@ -126,16 +126,24 @@ export function Damu3DCharacter({
   return (
     <div
       className={`relative flex flex-col items-center justify-center select-none ${className}`}
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'pan-y' }}
     >
       {/* 3D Scene Host Container */}
       <div
         ref={hostRef}
         onClick={handleWave}
-        className="relative w-full max-w-[340px] sm:max-w-[400px] h-[340px] sm:h-[400px] flex items-center justify-center cursor-grab active:cursor-grabbing"
-        title="Damu 3D Mascot - Drag to rotate, click to wave"
-        role="img"
-        aria-label="Interactive 3D Damu Mascot"
+        className="relative w-full max-w-[340px] sm:max-w-[400px] h-[340px] sm:h-[400px] flex items-center justify-center cursor-pointer touch-pan-y"
+        style={{ touchAction: 'pan-y' }}
+        title="Damu 3D Mascot - Tap to wave"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleWave();
+          }
+        }}
+        aria-label="Interactive 3D Damu Mascot - Tap to wave"
       />
 
       {/* Static Fallback (if WebGL unavailable or during loading) */}
@@ -153,10 +161,14 @@ export function Damu3DCharacter({
 
       {/* Subtle interactive affordance hint */}
       {!showFallback && isLoaded && (
-        <div className="mt-1 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#29231F]/05 border border-[#29231F]/08 text-2xs font-mono text-[#65564C] tracking-wider shadow-xs">
+        <button
+          type="button"
+          onClick={handleWave}
+          className="mt-1 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#29231F]/05 border border-[#29231F]/08 text-2xs font-mono text-[#65564C] tracking-wider shadow-xs cursor-pointer select-none"
+        >
           <span className="w-1.5 h-1.5 rounded-full bg-accent/80 animate-pulse" />
-          <span>Drag to inspect · Tap to wave</span>
-        </div>
+          <span>Tap Damu to wave</span>
+        </button>
       )}
     </div>
   );
