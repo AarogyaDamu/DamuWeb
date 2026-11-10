@@ -7,19 +7,25 @@ import { CookieBanner } from './components/ui/CookieBanner';
 import { StickyMobileCta } from './components/ui/StickyMobileCta';
 
 import { HomePage } from './pages/HomePage';
-import { AboutPage } from './pages/AboutPage';
-import { FaqPage } from './pages/FaqPage';
-import { ContactPage } from './pages/ContactPage';
-import { SecurityPage } from './pages/SecurityPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { TermsPage } from './pages/TermsPage';
-import { ThankYouPage } from './pages/ThankYouPage';
-import { NotFoundPage } from './pages/NotFoundPage';
 import { initAnalytics, trackPageView } from './lib/analytics';
 
-export function App() {
+const AboutPage = React.lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const FaqPage = React.lazy(() => import('./pages/FaqPage').then(m => ({ default: m.FaqPage })));
+const ContactPage = React.lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const SecurityPage = React.lazy(() => import('./pages/SecurityPage').then(m => ({ default: m.SecurityPage })));
+const PrivacyPage = React.lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
+const TermsPage = React.lazy(() => import('./pages/TermsPage').then(m => ({ default: m.TermsPage })));
+const ThankYouPage = React.lazy(() => import('./pages/ThankYouPage').then(m => ({ default: m.ThankYouPage })));
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+
+export interface AppProps {
+  initialPath?: string;
+}
+
+export function App({ initialPath }: AppProps = {}) {
   const [currentPath, setCurrentPath] = useState<string>(() => {
-    return window.location.pathname || '/';
+    if (initialPath) return initialPath;
+    return (typeof window !== 'undefined' ? window.location.pathname : '/') || '/';
   });
   const [isEarlyAccessOpen, setIsEarlyAccessOpen] = useState<boolean>(false);
   const [isPrivacySettingsOpen, setIsPrivacySettingsOpen] = useState<boolean>(false);
@@ -114,7 +120,17 @@ export function App() {
         />
 
         <main className="flex-grow" id="main-content">
-          {renderPage()}
+          {currentPath === '/' || currentPath.startsWith('/#') ? (
+            <HomePage
+              onNavigate={navigate}
+              onOpenGetStarted={() => setIsEarlyAccessOpen(true)}
+              onOpenEarlyAccess={() => setIsEarlyAccessOpen(true)}
+            />
+          ) : (
+            <React.Suspense fallback={<div className="min-h-[50vh]" aria-busy="true" />}>
+              {renderPage()}
+            </React.Suspense>
+          )}
         </main>
 
         <Footer

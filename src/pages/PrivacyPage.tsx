@@ -1,5 +1,6 @@
 import React from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
+import { ROUTES_METADATA } from '../lib/routes';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
@@ -9,11 +10,7 @@ interface SubPageProps {
 export function PrivacyPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-10">
-      <SeoHead
-        title="Privacy Policy - AarogyaDamu"
-        description="Read AarogyaDamu's privacy policy: information collection, consent principles, analytics preferences, and data handling safeguards."
-        canonicalUrl="https://www.aarogyadamu.com/privacy"
-      />
+      <SeoHead {...ROUTES_METADATA['/privacy']} />
 
       <div className="space-y-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-sage">Data Safeguards & Rights</span>

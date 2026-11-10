@@ -3,6 +3,7 @@ import { SeoHead } from '../components/seo/SeoHead';
 import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { IconArrowRight, IconAlertCircle } from '../components/ui/CustomSvgIcons';
 import { trackEvent } from '../lib/analytics';
+import { ROUTES_METADATA } from '../lib/routes';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
@@ -86,27 +87,9 @@ export function ContactPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
     }
   };
 
-  const contactSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'ContactPage',
-    name: 'Contact AarogyaDamu',
-    description: 'Get in touch with the AarogyaDamu engineering and product team.',
-    mainEntity: {
-      '@type': 'Organization',
-      name: 'AarogyaDamu',
-      email: 'contact@aarogyadamu.com',
-      url: 'https://www.aarogyadamu.com',
-    },
-  };
-
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-12">
-      <SeoHead
-        title="Get in Touch - AarogyaDamu Engineering Team"
-        description="Contact the AarogyaDamu health technology team for product inquiries, doctor integrations, and technical support. Email: contact@aarogyadamu.com"
-        canonicalUrl="https://www.aarogyadamu.com/contact"
-        schemaJson={contactSchema}
-      />
+      <SeoHead {...ROUTES_METADATA['/contact']} />
 
       <Breadcrumbs items={[{ name: 'Contact' }]} onNavigate={onNavigate} />
 

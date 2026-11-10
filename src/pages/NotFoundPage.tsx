@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
 import { IconArrowRight, IconActivity } from '../components/ui/CustomSvgIcons';
 import { trackEvent } from '../lib/analytics';
+import { ROUTES_METADATA } from '../lib/routes';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
@@ -10,16 +11,11 @@ interface SubPageProps {
 
 export function NotFoundPage({ onNavigate }: SubPageProps) {
   useEffect(() => {
-    trackEvent('page_not_found', { path: window.location.pathname });
+    trackEvent('page_not_found', { path: typeof window !== 'undefined' ? window.location.pathname : '/404' });
   }, []);
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-md mx-auto text-center space-y-8">
-      <SeoHead
-        title="Page Not Found (404) - AarogyaDamu"
-        description="The requested page could not be found. Return to AarogyaDamu homepage or explore our product suite."
-        canonicalUrl=""
-        robots="noindex, follow"
-      />
+      <SeoHead {...ROUTES_METADATA['/404']} />
 
       <div className="w-16 h-16 rounded-full bg-surface-subtle border border-foreground/10 text-foreground flex items-center justify-center mx-auto">
         <IconActivity className="w-8 h-8 text-accent" />

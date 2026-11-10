@@ -19,30 +19,11 @@ function isPlainLeftClick(e: React.MouseEvent<HTMLAnchorElement>): boolean {
 }
 
 export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
-  const organizationSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'AarogyaDamu',
-    url: 'https://www.aarogyadamu.com',
-    email: 'contact@aarogyadamu.com',
-    description: 'Personal Health Intelligence - connecting your healthcare life into continuously useful health context.',
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Pune',
-      addressRegion: 'Maharashtra',
-      addressCountry: 'IN',
-    },
-  };
-
   return (
     <footer
       className="bg-surface-dark text-white pt-14 pb-10 border-t border-white/05"
       role="contentinfo"
     >
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-10 border-b border-white/08">
 

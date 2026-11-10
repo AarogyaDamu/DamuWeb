@@ -1,6 +1,7 @@
 import React from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
 import { IconCheck, IconArrowRight, IconMail } from '../components/ui/CustomSvgIcons';
+import { ROUTES_METADATA } from '../lib/routes';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
@@ -10,12 +11,7 @@ interface SubPageProps {
 export function ThankYouPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-xl mx-auto text-center space-y-8">
-      <SeoHead
-        title="Message Received - AarogyaDamu"
-        description="Thank you for contacting AarogyaDamu. We have received your message and will respond as soon as possible."
-        canonicalUrl=""
-        robots="noindex, follow"
-      />
+      <SeoHead {...ROUTES_METADATA['/thank-you']} />
 
       <div className="w-16 h-16 rounded-full bg-sage/15 text-sage flex items-center justify-center mx-auto border border-sage/30">
         <IconCheck className="w-8 h-8 text-sage" />

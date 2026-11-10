@@ -1,5 +1,6 @@
 import React from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
+import { ROUTES_METADATA } from '../lib/routes';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
@@ -9,11 +10,7 @@ interface SubPageProps {
 export function SecurityPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-10">
-      <SeoHead
-        title="Security Practices - AarogyaDamu"
-        description="Learn about security practices at AarogyaDamu: transport encryption, access control, credential isolation, and security development principles."
-        canonicalUrl="https://www.aarogyadamu.com/security"
-      />
+      <SeoHead {...ROUTES_METADATA['/security']} />
 
       <div className="space-y-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-accent">Security & Protection</span>
