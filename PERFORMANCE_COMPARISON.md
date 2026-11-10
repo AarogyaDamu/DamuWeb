@@ -32,18 +32,28 @@ The JavaScript and CSS bundles emitted by Vite before and after implementing `Re
 
 ---
 
-## 3. Core Web Vitals Impact Analysis
+## 3. Expected Core Web Vitals Benefits
 
-### A. Largest Contentful Paint (LCP)
-- **Before Phase 2:** Required waiting for client-side JavaScript execution, React bundle parse, DOM construction, and font attachment.
-- **After Phase 2:** The initial HTML response contains the complete semantic DOM structure (`<h1>`, hero copy, navigation, buttons) rendered server-side. The browser paints hero text during the first layout pass, drastically reducing LCP on slow 3G/4G cellular connections.
+> [!NOTE]
+> **Measurement Status:** Real-user Core Web Vitals (LCP, FCP, INP, CLS) from field data (such as Google Chrome User Experience Report / CrUX or Google Analytics 4 real-user monitoring) have **not yet been measured** in production for this release. While the bundle sizes in Section 1 represent actual empirical build output measurements, the discussion below outlines the **expected architectural benefits** of transitioning from a pure client-side SPA to static prerendering, rather than measured field metrics.
 
-### B. First Contentful Paint (FCP)
-- Pre-rendered static HTML is rendered immediately upon arrival. FCP drops closer to TTFB (Time To First Byte), typically sub-300ms on Vercel's global edge network.
+### A. Largest Contentful Paint (LCP) — Expected Architectural Impact
+- **Client-Side SPA (Prior Baseline):** Required downloading, parsing, and executing client-side JavaScript before React could construct the DOM and mount the hero section, delaying the paint of the primary content elements.
+- **Prerendered Architecture (Phase 2):** The initial HTML document contains the complete semantic DOM structure (`<h1>`, hero copy, navigation, buttons) rendered at build time. Browsers can begin parsing and painting content during the initial HTML stream, without waiting for JavaScript bundle execution. Field LCP will be measured post-launch across mobile and desktop devices.
 
-### C. Interaction to Next Paint (INP)
-- Hybrid hydration via `ReactDOM.hydrateRoot()` attaches event handlers directly to pre-rendered DOM elements without teardown or re-rendering, maintaining responsiveness.
+### B. First Contentful Paint (FCP) — Expected Architectural Impact
+- Pre-rendered static HTML allows the browser to paint meaningful content upon receiving the initial HTML payload. FCP is structurally decoupled from JavaScript bundle parsing, though actual FCP timings will depend on network latency, TTFB, and CDN edge delivery.
 
-### D. Cumulative Layout Shift (CLS)
-- Because full markup, headers, and navigation layout are baked into the static HTML, layout shift during hydration is effectively zero.
+### C. Interaction to Next Paint (INP) — Expected Architectural Impact
+- Hybrid hydration via `ReactDOM.hydrateRoot()` binds event listeners directly to pre-rendered DOM elements without DOM teardown or regeneration. Secondary route code-splitting reduces the main-thread parse and evaluation overhead for initial load. Real-user responsiveness will be tracked through Core Web Vitals field monitoring.
+
+### D. Cumulative Layout Shift (CLS) — Expected Architectural Impact
+- Because page layouts, headers, and navigation are baked into the static HTML, layout shifts caused by delayed DOM insertion from client-side scripts are structurally minimized. Real-user layout stability will be validated through post-deployment field data.
+
+---
+
+## 4. Post-Deployment Monitoring Plan
+
+1. **Field RUM Data:** Utilize Google Analytics 4 and Web Vitals real-user monitoring to gather 75th-percentile field measurements (LCP, FCP, INP, CLS) across real visitor devices and network conditions.
+2. **Lab Audits:** Conduct synthetic Lighthouse and PageSpeed Insights audits on production URLs (`https://www.aarogyadamu.com`) post-deployment to benchmark lab scores against previous client-only baselines.
 

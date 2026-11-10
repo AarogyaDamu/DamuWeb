@@ -78,7 +78,7 @@ During build tests, each prerendered page was audited for the presence of the Su
 
 ## 3. Client Hydration Strategy (`src/main.tsx`)
 
-To avoid hydration mismatches, DOM flicker, or accidental replacement of server-rendered markup:
+To avoid hydration mismatches, DOM flicker, or accidental replacement of server-rendered markup, client entry checks an explicit `data-prerendered` attribute on the root container rather than relying on `hasChildNodes()`:
 
 ```tsx
 // src/main.tsx
@@ -89,12 +89,20 @@ import './index.css';
 
 const rootElement = document.getElementById('root');
 
-if (rootElement && rootElement.hasChildNodes()) {
+if (rootElement && rootElement.getAttribute('data-prerendered') === 'true') {
   ReactDOM.hydrateRoot(
     rootElement,
     <React.StrictMode>
       <App />
     </React.StrictMode>,
+    {
+      onRecoverableError(error, errorInfo) {
+        console.error('[HYDRATION_RECOVERABLE_ERROR]', error);
+        if (errorInfo?.componentStack) {
+          console.error('[HYDRATION_COMPONENT_STACK]', errorInfo.componentStack);
+        }
+      },
+    },
   );
 } else if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
@@ -105,10 +113,12 @@ if (rootElement && rootElement.hasChildNodes()) {
 }
 ```
 
-### In-Browser Mechanics
-1. **Static Initial Load:** When a crawler or browser fetches any URL, `#root` already contains the full DOM tree emitted by `prerenderToNodeStream`.
-2. **Hydration Phase:** `rootElement.hasChildNodes()` evaluates to `true`. `ReactDOM.hydrateRoot()` binds event listeners to the existing DOM nodes without wiping or re-rendering them.
-3. **Development / Fallback Phase:** In `npm run dev` or when loading an empty container, `rootElement.hasChildNodes()` evaluates to `false`, engaging `ReactDOM.createRoot()` cleanly.
+### In-Browser Mechanics & Prerender Detection
+1. **Source Template Initialization:** The source `index.html` designates `<div id="root" data-prerendered="false"><!-- APP_ROOT_CONTENT --></div>`.
+2. **Build-Time Prerendering (`scripts/prerender.mjs`):** During static HTML generation, the prerenderer injects the static DOM into the root container and replaces `data-prerendered="false"` with `data-prerendered="true"`.
+3. **Hydration for Prerendered Pages (`hydrateRoot`):** In production builds for prerendered pages, `rootElement.getAttribute('data-prerendered') === 'true'` evaluates to `true`. `ReactDOM.hydrateRoot()` preserves the pre-existing server-rendered HTML nodes and attaches React event listeners without destroying or re-rendering the DOM tree. The `onRecoverableError` hook logs any recoverable hydration discrepancies with full component stacks.
+4. **Development & Non-Prerendered Fallback (`createRoot`):** During local development (`npm run dev`) or whenever loading a non-prerendered container, `data-prerendered` is `"false"` (or absent). React avoids attempting hydration on empty markup and initializes standard client rendering via `ReactDOM.createRoot()`.
+5. **Why `hasChildNodes()` Was Replaced:** DOM inspection using `hasChildNodes()` treats HTML comment placeholders (such as `<!-- APP_ROOT_CONTENT -->`) as child nodes (`Node.COMMENT_NODE`), causing `hasChildNodes()` to incorrectly return `true` even when no actual server markup was rendered. The explicit `data-prerendered="true"` attribute provides a deterministic contract between build-time static generation and runtime client execution.
 
 ---
 
