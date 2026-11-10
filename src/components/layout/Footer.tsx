@@ -7,12 +7,23 @@ interface FooterProps {
   onOpenPrivacySettings?: () => void;
 }
 
+function isPlainLeftClick(e: React.MouseEvent<HTMLAnchorElement>): boolean {
+  return (
+    e.button === 0 &&
+    !e.metaKey &&
+    !e.ctrlKey &&
+    !e.altKey &&
+    !e.shiftKey &&
+    (!e.currentTarget.target || e.currentTarget.target === '_self')
+  );
+}
+
 export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
   const organizationSchema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'AarogyaDamu',
-    url: 'https://aarogyadamu.com',
+    url: 'https://www.aarogyadamu.com',
     email: 'contact@aarogyadamu.com',
     description: 'Personal Health Intelligence - connecting your healthcare life into continuously useful health context.',
     address: {
@@ -37,18 +48,21 @@ export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
 
           {/* Brand */}
           <div className="lg:col-span-2 space-y-4">
-            <button
-              onClick={() => {
+            <a
+              href="/"
+              onClick={(e) => {
+                if (!isPlainLeftClick(e)) return;
+                e.preventDefault();
                 trackEvent('nav_link_click', { link_name: 'home_brand', destination: '/' });
                 onNavigate('/');
               }}
-              className="flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
+              className="inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
               aria-label="AarogyaDamu home"
             >
               <span className="font-serif text-lg font-bold tracking-tight">
                 Aarogya<span className="text-accent">Damu</span>
               </span>
-            </button>
+            </a>
             <a
               href="mailto:contact@aarogyadamu.com"
               onClick={() => trackEvent('outbound_link_click', { link_text: 'email', destination: 'mailto:contact@aarogyadamu.com', source: 'footer' })}
@@ -71,23 +85,26 @@ export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
                 { label: 'FAQ', href: '/faq', isRoute: true },
               ].map(link => (
                 <li key={link.href}>
-                  <button
-                    onClick={() => {
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      if (!isPlainLeftClick(e)) return;
+                      e.preventDefault();
                       trackEvent('nav_link_click', { link_name: link.label, destination: link.href });
                       if (link.isRoute) {
                         onNavigate(link.href);
                       } else {
                         onNavigate('/');
                         setTimeout(() => {
-                          const el = document.getElementById('intelligence');
+                          const el = document.getElementById(link.href.replace('/#', ''));
                           if (el) el.scrollIntoView({ behavior: 'smooth' });
                         }, 100);
                       }
                     }}
-                    className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
+                    className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded inline-block"
                   >
                     {link.label}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -98,40 +115,50 @@ export function Footer({ onNavigate, onOpenPrivacySettings }: FooterProps) {
             <h3 className="text-2xs font-mono font-semibold tracking-widest-2 text-white/30 uppercase">Legal & Security</h3>
             <ul className="space-y-2">
               <li>
-                <button
-                  onClick={() => {
+                <a
+                  href="/privacy"
+                  onClick={(e) => {
+                    if (!isPlainLeftClick(e)) return;
+                    e.preventDefault();
                     trackEvent('nav_link_click', { link_name: 'Privacy', destination: '/privacy' });
                     onNavigate('/privacy');
                   }}
-                  className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
+                  className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded inline-block"
                 >
                   Privacy
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => {
+                <a
+                  href="/terms"
+                  onClick={(e) => {
+                    if (!isPlainLeftClick(e)) return;
+                    e.preventDefault();
                     trackEvent('nav_link_click', { link_name: 'Terms', destination: '/terms' });
                     onNavigate('/terms');
                   }}
-                  className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
+                  className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded inline-block"
                 >
                   Terms
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => {
+                <a
+                  href="/security"
+                  onClick={(e) => {
+                    if (!isPlainLeftClick(e)) return;
+                    e.preventDefault();
                     trackEvent('nav_link_click', { link_name: 'Security', destination: '/security' });
                     onNavigate('/security');
                   }}
-                  className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded"
+                  className="text-sm text-white/50 hover:text-white transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded inline-block"
                 >
                   Security
-                </button>
+                </a>
               </li>
               <li>
                 <button
+                  type="button"
                   onClick={() => {
                     if (onOpenPrivacySettings) {
                       onOpenPrivacySettings();

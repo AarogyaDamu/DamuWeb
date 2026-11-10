@@ -27,7 +27,7 @@ export function FaqPage({ onNavigate }: SubPageProps) {
       <SeoHead
         title="Frequently Asked Questions (FAQ) - AarogyaDamu"
         description="Find answers to common questions about AarogyaDamu, personal health intelligence, privacy, doctor sharing, and Damu agent."
-        canonicalUrl="https://aarogyadamu.com/faq"
+        canonicalUrl="https://www.aarogyadamu.com/faq"
         schemaJson={faqSchema}
       />
 
@@ -46,7 +46,7 @@ export function FaqPage({ onNavigate }: SubPageProps) {
       <div className="space-y-4">
         {FAQ_DATA.map((faq, idx) => (
           <div key={idx} className="p-6 rounded-3xl bg-surface border border-foreground/10 space-y-3 shadow-subtle">
-            <h3 className="font-serif text-lg font-bold text-foreground">{faq.q}</h3>
+            <h2 className="font-serif text-lg font-bold text-foreground">{faq.q}</h2>
             <div className="text-xs text-foreground-muted leading-relaxed space-y-2">
               {faq.a.split('\n\n').map((paragraph, pIdx) => (
                 <p key={pIdx}>

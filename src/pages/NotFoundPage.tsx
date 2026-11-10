@@ -17,7 +17,8 @@ export function NotFoundPage({ onNavigate }: SubPageProps) {
       <SeoHead
         title="Page Not Found (404) - AarogyaDamu"
         description="The requested page could not be found. Return to AarogyaDamu homepage or explore our product suite."
-        canonicalUrl="https://aarogyadamu.com/404"
+        canonicalUrl=""
+        robots="noindex, follow"
       />
 
       <div className="w-16 h-16 rounded-full bg-surface-subtle border border-foreground/10 text-foreground flex items-center justify-center mx-auto">

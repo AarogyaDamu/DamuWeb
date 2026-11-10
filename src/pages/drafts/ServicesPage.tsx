@@ -56,7 +56,7 @@ export function ServicesPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       '@type': 'ListItem',
       position: idx + 1,
       name: srv.title,
-      url: `https://aarogyadamu.com${srv.path}`,
+      url: `https://www.aarogyadamu.com${srv.path}`,
     })),
   };
 
@@ -65,7 +65,7 @@ export function ServicesPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Health Intelligence Services - AarogyaDamu"
         description="Explore AarogyaDamu's core personal health services: Longitudinal Health Model, Care Hub refills, Lab Report OCR, patient-controlled doctor sharing, and Damu agent."
-        canonicalUrl="https://aarogyadamu.com/services"
+        canonicalUrl="https://www.aarogyadamu.com/services"
         schemaJson={servicesSchema}
       />
 

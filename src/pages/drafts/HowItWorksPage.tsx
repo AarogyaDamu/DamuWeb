@@ -36,7 +36,7 @@ export function HowItWorksPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="How It Works - AarogyaDamu Personal Health Intelligence"
         description="Discover how AarogyaDamu connects scattered health information into a continuously useful personal health context."
-        canonicalUrl="https://aarogyadamu.com/how-it-works"
+        canonicalUrl="https://www.aarogyadamu.com/how-it-works"
       />
 
       <Breadcrumbs items={[{ name: 'How It Works' }]} onNavigate={onNavigate} />

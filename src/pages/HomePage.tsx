@@ -26,7 +26,7 @@ export function HomePage({ onNavigate, onOpenEarlyAccess }: HomePageProps) {
       <SeoHead
         title="AarogyaDamu - Personal Health Intelligence"
         description="AarogyaDamu connects your healthcare life, bringing records, interactions, measurements and everyday health information together into continuously useful health context."
-        canonicalUrl="https://aarogyadamu.com/"
+        canonicalUrl="https://www.aarogyadamu.com/"
       />
 
       {/* 1. Personal Health Intelligence & Health Vault Unified Hero */}

@@ -68,7 +68,7 @@ export function BlogPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       headline: art.title,
       description: art.description,
       datePublished: '2026-08-15',
-      url: `https://aarogyadamu.com/blog/${art.slug}`,
+      url: `https://www.aarogyadamu.com/blog/${art.slug}`,
     })),
   };
 
@@ -77,7 +77,7 @@ export function BlogPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Educational Health Technology Blog - AarogyaDamu"
         description="Read educational articles on longitudinal health records, personal baselines vs population averages, AI safety, and DPDP compliance in India."
-        canonicalUrl="https://aarogyadamu.com/blog"
+        canonicalUrl="https://www.aarogyadamu.com/blog"
         schemaJson={blogSchema}
       />
 

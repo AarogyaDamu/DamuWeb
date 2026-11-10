@@ -1,9 +1,5 @@
-# Robots.txt for AarogyaDamu (https://aarogyadamu.com)
+# Robots.txt for AarogyaDamu (https://www.aarogyadamu.com)
 User-agent: *
 Allow: /
-
-# Non-indexable utility & confirmation routes
-Disallow: /thank-you
-Disallow: /404
 
 Sitemap: https://www.aarogyadamu.com/sitemap.xml
