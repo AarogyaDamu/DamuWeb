@@ -2,6 +2,7 @@ import React from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
 import { Breadcrumbs } from '../components/ui/Breadcrumbs';
 import { FAQ_DATA, renderFormattedText } from '../components/sections/FaqSection';
+import { ROUTES_METADATA } from '../lib/routes';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
@@ -9,27 +10,9 @@ interface SubPageProps {
 }
 
 export function FaqPage({ onNavigate }: SubPageProps) {
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: FAQ_DATA.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: f.a.replace(/\*/g, ''),
-      },
-    })),
-  };
-
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto space-y-12">
-      <SeoHead
-        title="Frequently Asked Questions (FAQ) - AarogyaDamu"
-        description="Find answers to common questions about AarogyaDamu, personal health intelligence, privacy, doctor sharing, and Damu agent."
-        canonicalUrl="https://www.aarogyadamu.com/faq"
-        schemaJson={faqSchema}
-      />
+      <SeoHead {...ROUTES_METADATA['/faq']} />
 
       <Breadcrumbs items={[{ name: 'FAQ' }]} onNavigate={onNavigate} />
 

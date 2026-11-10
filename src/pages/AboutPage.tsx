@@ -1,6 +1,7 @@
 import React from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
 import { Breadcrumbs } from '../components/ui/Breadcrumbs';
+import { ROUTES_METADATA } from '../lib/routes';
 
 interface SubPageProps {
   onNavigate: (path: string) => void;
@@ -10,11 +11,7 @@ interface SubPageProps {
 export function AboutPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
   return (
     <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-16">
-      <SeoHead
-        title="About Us - AarogyaDamu Health Intelligence"
-        description="Learn about AarogyaDamu: our mission to build a continuous health intelligence layer for individuals, our engineering principles, and data sovereignty philosophy."
-        canonicalUrl="https://www.aarogyadamu.com/about"
-      />
+      <SeoHead {...ROUTES_METADATA['/about']} />
 
       <Breadcrumbs items={[{ name: 'About' }]} onNavigate={onNavigate} />
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { SeoHead } from '../components/seo/SeoHead';
+import { ROUTES_METADATA } from '../lib/routes';
 import { HeroSection } from '../components/sections/HeroSection';
 import { IntelligenceCapabilities } from '../components/sections/IntelligenceCapabilities';
 import { RecordsToContext } from '../components/sections/RecordsToContext';
@@ -23,11 +24,7 @@ export function HomePage({ onNavigate, onOpenEarlyAccess }: HomePageProps) {
 
   return (
     <>
-      <SeoHead
-        title="AarogyaDamu - Personal Health Intelligence"
-        description="AarogyaDamu connects your healthcare life, bringing records, interactions, measurements and everyday health information together into continuously useful health context."
-        canonicalUrl="https://www.aarogyadamu.com/"
-      />
+      <SeoHead {...ROUTES_METADATA['/']} />
 
       {/* 1. Personal Health Intelligence & Health Vault Unified Hero */}
       <HeroSection onNavigate={onNavigate} onOpenEarlyAccess={openEarlyAccess} />

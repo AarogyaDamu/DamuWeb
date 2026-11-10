@@ -31,7 +31,6 @@ export function Damu3DCharacter({
 }: Damu3DCharacterProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<DamuSceneHandle | null>(null);
-  const [hasWebGL] = useState<boolean>(() => isWebGLSupported());
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -43,7 +42,7 @@ export function Damu3DCharacter({
 
   // Lazy-load Three.js scene dynamically on mount
   useEffect(() => {
-    if (!hasWebGL || hasError) return;
+    if (!isWebGLSupported() || hasError) return;
 
     let disposed = false;
     const host = hostRef.current;
@@ -91,7 +90,7 @@ export function Damu3DCharacter({
       }
       setIsLoaded(false);
     };
-  }, [hasWebGL, hasError]);
+  }, [hasError]);
 
   // Keep mode in sync
   useEffect(() => {
@@ -121,7 +120,7 @@ export function Damu3DCharacter({
     }
   }, []);
 
-  const showFallback = !hasWebGL || hasError;
+  const showFallback = !isLoaded || hasError;
 
   return (
     <div

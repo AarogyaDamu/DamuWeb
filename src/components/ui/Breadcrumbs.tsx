@@ -22,23 +22,8 @@ function isPlainLeftClick(e: React.MouseEvent<HTMLAnchorElement>): boolean {
 }
 
 export function Breadcrumbs({ items, onNavigate }: BreadcrumbsProps) {
-  const schemaBreadcrumbs = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, idx) => ({
-      '@type': 'ListItem',
-      position: idx + 1,
-      name: item.name,
-      item: item.path ? `https://www.aarogyadamu.com${item.path}` : undefined,
-    })),
-  };
-
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaBreadcrumbs) }}
-      />
       <ol className="flex flex-wrap items-center gap-2 text-xs text-foreground-muted">
         <li>
           <a
