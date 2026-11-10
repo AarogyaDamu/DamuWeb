@@ -14,7 +14,7 @@ export function DamuPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Damu Personal Health Agent Spec - AarogyaDamu"
         description="Damu voice and text agent specification: 11-state voice machine, grounded prompt payload compiler, and non-causal safety guardrails."
-        canonicalUrl="https://aarogyadamu.com/damu"
+        canonicalUrl="https://www.aarogyadamu.com/damu"
       />
 
       <Breadcrumbs items={[{ name: 'Damu Agent' }]} onNavigate={onNavigate} />

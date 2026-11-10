@@ -15,7 +15,7 @@ export function ForHealthcarePage({ onNavigate, onOpenGetStarted }: SubPageProps
       <SeoHead
         title="For Healthcare Providers - AarogyaDamu Specialist Doctor Views"
         description="AarogyaDamu for doctors and clinics: patient-controlled longitudinal timeline share grants, source provenance tracing, and appointment preparation."
-        canonicalUrl="https://aarogyadamu.com/for-healthcare"
+        canonicalUrl="https://www.aarogyadamu.com/for-healthcare"
       />
 
       <Breadcrumbs items={[{ name: 'For Healthcare' }]} onNavigate={onNavigate} />

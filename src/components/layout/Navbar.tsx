@@ -18,6 +18,17 @@ const NAV_LINKS = [
   { label: 'FAQ', path: '/faq' },
 ];
 
+function isPlainLeftClick(e: React.MouseEvent<HTMLAnchorElement>): boolean {
+  return (
+    e.button === 0 &&
+    !e.metaKey &&
+    !e.ctrlKey &&
+    !e.altKey &&
+    !e.shiftKey &&
+    (!e.currentTarget.target || e.currentTarget.target === '_self')
+  );
+}
+
 export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,7 +45,13 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleNavClick = (link: { label: string; path: string }) => {
+  const handleNavClick = (link: { label: string; path: string }, e?: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e && !isPlainLeftClick(e)) {
+      return;
+    }
+    if (e) {
+      e.preventDefault();
+    }
     setMobileOpen(false);
     trackEvent('nav_link_click', { link_name: link.label, destination: link.path });
     onNavigate(link.path);
@@ -53,8 +70,11 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
         <div className="flex items-center justify-between h-14 sm:h-16">
 
           {/* Logo */}
-          <button
-            onClick={() => {
+          <a
+            href="/"
+            onClick={(e) => {
+              if (!isPlainLeftClick(e)) return;
+              e.preventDefault();
               trackEvent('nav_link_click', { link_name: 'home_logo', destination: '/' });
               onNavigate('/');
             }}
@@ -64,16 +84,17 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
             <span className="font-serif text-lg font-bold text-foreground tracking-tight">
               Aarogya<span className="text-accent">Damu</span>
             </span>
-          </button>
+          </a>
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
             {NAV_LINKS.map(link => {
               const isActive = currentPath === link.path;
               return (
-                <button
+                <a
                   key={link.path}
-                  onClick={() => handleNavClick(link)}
+                  href={link.path}
+                  onClick={(e) => handleNavClick(link, e)}
                   className={`px-3.5 py-2 text-sm font-medium rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                     isActive
                       ? 'text-foreground bg-surface font-semibold'
@@ -81,7 +102,7 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
                   }`}
                 >
                   {link.label}
-                </button>
+                </a>
               );
             })}
           </nav>
@@ -127,13 +148,14 @@ export function Navbar({ currentPath, onNavigate, onOpenEarlyAccess }: NavbarPro
           >
             <nav className="px-4 py-4 space-y-1" aria-label="Mobile navigation">
               {NAV_LINKS.map(link => (
-                <button
+                <a
                   key={link.path}
-                  onClick={() => handleNavClick(link)}
-                  className="w-full text-left px-3 py-2.5 text-sm font-medium text-foreground-muted hover:text-foreground rounded-xl hover:bg-surface transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  href={link.path}
+                  onClick={(e) => handleNavClick(link, e)}
+                  className="block w-full text-left px-3 py-2.5 text-sm font-medium text-foreground-muted hover:text-foreground rounded-xl hover:bg-surface transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   {link.label}
-                </button>
+                </a>
               ))}
               <div className="pt-3 pb-1">
                 <button

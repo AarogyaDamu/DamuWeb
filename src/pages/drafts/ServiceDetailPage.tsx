@@ -112,7 +112,7 @@ export function ServiceDetailPage({ serviceId, onNavigate, onOpenGetStarted }: S
     provider: {
       '@type': 'Organization',
       name: 'AarogyaDamu',
-      url: 'https://aarogyadamu.com',
+      url: 'https://www.aarogyadamu.com',
       email: 'contact@aarogyadamu.com',
     },
     description: serviceDetails.metaDesc,
@@ -123,7 +123,7 @@ export function ServiceDetailPage({ serviceId, onNavigate, onOpenGetStarted }: S
       <SeoHead
         title={`${serviceDetails.title} - AarogyaDamu`}
         description={serviceDetails.metaDesc}
-        canonicalUrl={`https://aarogyadamu.com/services/${serviceId}`}
+        canonicalUrl={`https://www.aarogyadamu.com/services/${serviceId}`}
         schemaJson={serviceSchema}
       />
 

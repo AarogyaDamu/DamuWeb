@@ -38,7 +38,7 @@ export function CaseStudiesPage({ onNavigate, onOpenGetStarted }: SubPageProps) 
       <SeoHead
         title="Case Studies & Engine Validation Scenarios - AarogyaDamu"
         description="Explore real engine validation scenarios demonstrating how AarogyaDamu converts fragmented health PDFs into longitudinal baselines and evidence-bounded explanations."
-        canonicalUrl="https://aarogyadamu.com/case-studies"
+        canonicalUrl="https://www.aarogyadamu.com/case-studies"
       />
 
       <Breadcrumbs items={[{ name: 'Case Studies' }]} onNavigate={onNavigate} />

@@ -100,7 +100,7 @@ export function DoctorShareDemo() {
                 <div className="p-3.5 rounded-xl bg-surface/10 border border-surface/20 space-y-2">
                   <div className="text-[10px] text-surface/50 font-mono">Patient Grant Token Hash:</div>
                   <div className="font-mono text-xs font-bold text-accent break-all bg-surface/5 p-2 rounded border border-surface/10">
-                    https://aarogyadamu.com/share/AGD-7K2P-93XM#t=9f2a7b1c
+                    https://www.aarogyadamu.com/share/AGD-7K2P-93XM#t=9f2a7b1c
                   </div>
                   <button
                     onClick={handleCopyLink}

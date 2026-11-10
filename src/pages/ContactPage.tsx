@@ -95,7 +95,7 @@ export function ContactPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       '@type': 'Organization',
       name: 'AarogyaDamu',
       email: 'contact@aarogyadamu.com',
-      url: 'https://aarogyadamu.com',
+      url: 'https://www.aarogyadamu.com',
     },
   };
 
@@ -104,7 +104,7 @@ export function ContactPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Get in Touch - AarogyaDamu Engineering Team"
         description="Contact the AarogyaDamu health technology team for product inquiries, doctor integrations, and technical support. Email: contact@aarogyadamu.com"
-        canonicalUrl="https://aarogyadamu.com/contact"
+        canonicalUrl="https://www.aarogyadamu.com/contact"
         schemaJson={contactSchema}
       />
 

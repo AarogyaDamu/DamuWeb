@@ -13,7 +13,7 @@ export function TermsPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Terms of Service & Clinical Disclaimer - AarogyaDamu"
         description="Review terms of service, patient responsibilities, and medical boundary disclaimers for AarogyaDamu."
-        canonicalUrl="https://aarogyadamu.com/terms"
+        canonicalUrl="https://www.aarogyadamu.com/terms"
       />
 
       <div className="space-y-3">
@@ -33,17 +33,17 @@ export function TermsPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
         </section>
 
         <section className="space-y-2">
-          <h3 className="font-serif text-lg font-bold text-foreground">1. Acceptance of Terms</h3>
+          <h2 className="font-serif text-lg font-bold text-foreground">1. Acceptance of Terms</h2>
           <p>By creating an account or accessing the AarogyaDamu website and mobile applications, you agree to these terms and acknowledge the clinical boundaries stated above.</p>
         </section>
 
         <section className="space-y-2">
-          <h3 className="font-serif text-lg font-bold text-foreground">2. User Account and UIN Integrity</h3>
+          <h2 className="font-serif text-lg font-bold text-foreground">2. User Account and UIN Integrity</h2>
           <p>You are responsible for maintaining the confidentiality of your UIN access tokens and security links shared with healthcare providers.</p>
         </section>
 
         <section className="space-y-2">
-          <h3 className="font-serif text-lg font-bold text-foreground">3. Emergency Situations</h3>
+          <h2 className="font-serif text-lg font-bold text-foreground">3. Emergency Situations</h2>
           <p>If you believe you are experiencing a medical emergency, immediately call your local emergency services (102/108 in India) or visit the nearest hospital emergency room.</p>
         </section>
       </div>

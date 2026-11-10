@@ -12,7 +12,7 @@ export function SecurityPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Security Practices - AarogyaDamu"
         description="Learn about security practices at AarogyaDamu: transport encryption, access control, credential isolation, and security development principles."
-        canonicalUrl="https://aarogyadamu.com/security"
+        canonicalUrl="https://www.aarogyadamu.com/security"
       />
 
       <div className="space-y-3">

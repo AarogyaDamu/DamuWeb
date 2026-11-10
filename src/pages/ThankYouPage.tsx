@@ -13,7 +13,8 @@ export function ThankYouPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Message Received - AarogyaDamu"
         description="Thank you for contacting AarogyaDamu. We have received your message and will respond as soon as possible."
-        canonicalUrl="https://aarogyadamu.com/thank-you"
+        canonicalUrl=""
+        robots="noindex, follow"
       />
 
       <div className="w-16 h-16 rounded-full bg-sage/15 text-sage flex items-center justify-center mx-auto border border-sage/30">

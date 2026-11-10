@@ -77,11 +77,11 @@ export function BlogPostPage({ slug, onNavigate, onOpenGetStarted }: BlogPostPag
       name: 'AarogyaDamu',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://aarogyadamu.com/android-chrome-512x512.png',
+        url: 'https://www.aarogyadamu.com/android-chrome-512x512.png',
       },
     },
     datePublished: '2026-08-15',
-    mainEntityOfPage: `https://aarogyadamu.com/blog/${article.slug}`,
+    mainEntityOfPage: `https://www.aarogyadamu.com/blog/${article.slug}`,
   };
 
   return (
@@ -89,7 +89,7 @@ export function BlogPostPage({ slug, onNavigate, onOpenGetStarted }: BlogPostPag
       <SeoHead
         title={`${article.title} - AarogyaDamu Blog`}
         description={article.description}
-        canonicalUrl={`https://aarogyadamu.com/blog/${article.slug}`}
+        canonicalUrl={`https://www.aarogyadamu.com/blog/${article.slug}`}
         schemaJson={articleSchema}
       />
 

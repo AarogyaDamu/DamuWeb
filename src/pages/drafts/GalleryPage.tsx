@@ -15,7 +15,7 @@ export function GalleryPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Visual Showcase & Transformation Gallery - AarogyaDamu"
         description="View the visual transformation from fragmented paper medical records to AarogyaDamu's continuous longitudinal health picture."
-        canonicalUrl="https://aarogyadamu.com/gallery"
+        canonicalUrl="https://www.aarogyadamu.com/gallery"
       />
 
       <Breadcrumbs items={[{ name: 'Gallery' }]} onNavigate={onNavigate} />

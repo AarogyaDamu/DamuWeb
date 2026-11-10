@@ -12,7 +12,7 @@ export function PrivacyPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Privacy Policy - AarogyaDamu"
         description="Read AarogyaDamu's privacy policy: information collection, consent principles, analytics preferences, and data handling safeguards."
-        canonicalUrl="https://aarogyadamu.com/privacy"
+        canonicalUrl="https://www.aarogyadamu.com/privacy"
       />
 
       <div className="space-y-3">

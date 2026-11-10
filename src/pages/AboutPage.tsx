@@ -13,7 +13,7 @@ export function AboutPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="About Us - AarogyaDamu Health Intelligence"
         description="Learn about AarogyaDamu: our mission to build a continuous health intelligence layer for individuals, our engineering principles, and data sovereignty philosophy."
-        canonicalUrl="https://aarogyadamu.com/about"
+        canonicalUrl="https://www.aarogyadamu.com/about"
       />
 
       <Breadcrumbs items={[{ name: 'About' }]} onNavigate={onNavigate} />

@@ -10,6 +10,17 @@ interface BreadcrumbsProps {
   onNavigate: (path: string) => void;
 }
 
+function isPlainLeftClick(e: React.MouseEvent<HTMLAnchorElement>): boolean {
+  return (
+    e.button === 0 &&
+    !e.metaKey &&
+    !e.ctrlKey &&
+    !e.altKey &&
+    !e.shiftKey &&
+    (!e.currentTarget.target || e.currentTarget.target === '_self')
+  );
+}
+
 export function Breadcrumbs({ items, onNavigate }: BreadcrumbsProps) {
   const schemaBreadcrumbs = {
     '@context': 'https://schema.org',
@@ -18,7 +29,7 @@ export function Breadcrumbs({ items, onNavigate }: BreadcrumbsProps) {
       '@type': 'ListItem',
       position: idx + 1,
       name: item.name,
-      item: item.path ? `https://aarogyadamu.com${item.path}` : undefined,
+      item: item.path ? `https://www.aarogyadamu.com${item.path}` : undefined,
     })),
   };
 
@@ -30,12 +41,17 @@ export function Breadcrumbs({ items, onNavigate }: BreadcrumbsProps) {
       />
       <ol className="flex flex-wrap items-center gap-2 text-xs text-foreground-muted">
         <li>
-          <button
-            onClick={() => onNavigate('/')}
+          <a
+            href="/"
+            onClick={(e) => {
+              if (!isPlainLeftClick(e)) return;
+              e.preventDefault();
+              onNavigate('/');
+            }}
             className="hover:text-foreground transition-colors font-medium"
           >
             Home
-          </button>
+          </a>
         </li>
         {items.map((item, idx) => {
           const isLast = idx === items.length - 1;
@@ -47,12 +63,17 @@ export function Breadcrumbs({ items, onNavigate }: BreadcrumbsProps) {
                   {item.name}
                 </span>
               ) : (
-                <button
-                  onClick={() => onNavigate(item.path!)}
+                <a
+                  href={item.path}
+                  onClick={(e) => {
+                    if (!isPlainLeftClick(e)) return;
+                    e.preventDefault();
+                    onNavigate(item.path!);
+                  }}
                   className="hover:text-foreground transition-colors font-medium"
                 >
                   {item.name}
-                </button>
+                </a>
               )}
             </li>
           );

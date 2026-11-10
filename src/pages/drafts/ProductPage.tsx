@@ -17,7 +17,7 @@ export function ProductPage({ onNavigate, onOpenGetStarted }: SubPageProps) {
       <SeoHead
         title="Product Suite - AarogyaDamu Health Intelligence"
         description="Explore AarogyaDamu's full product suite: Personal Health Model, Care Hub medication refills, Lab Report OCR, patient-controlled doctor sharing, and Damu voice agent."
-        canonicalUrl="https://aarogyadamu.com/product"
+        canonicalUrl="https://www.aarogyadamu.com/product"
       />
 
       <Breadcrumbs items={[{ name: 'Product' }]} onNavigate={onNavigate} />

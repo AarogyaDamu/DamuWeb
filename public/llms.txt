@@ -14,11 +14,11 @@ AarogyaDamu is a Personal Health Intelligence platform that connects fragmented 
 - **Patient Sovereignty**: Individuals own their health data and maintain explicit control over what is shared and with whom under DPDP India guidelines.
 
 ## Public Canonical Pages
-- Homepage: https://aarogyadamu.com/
-- About: https://aarogyadamu.com/about
-- FAQ: https://aarogyadamu.com/faq
-- Privacy Policy: https://aarogyadamu.com/privacy
-- Terms of Service: https://aarogyadamu.com/terms
+- Homepage: https://www.aarogyadamu.com/
+- About: https://www.aarogyadamu.com/about
+- FAQ: https://www.aarogyadamu.com/faq
+- Privacy Policy: https://www.aarogyadamu.com/privacy
+- Terms of Service: https://www.aarogyadamu.com/terms
 
 ## Contact Information
 - Public Email: contact@aarogyadamu.com
