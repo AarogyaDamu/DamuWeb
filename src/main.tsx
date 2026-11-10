@@ -11,6 +11,14 @@ if (rootElement && rootElement.getAttribute('data-prerendered') === 'true') {
     <React.StrictMode>
       <App />
     </React.StrictMode>,
+    {
+      onRecoverableError(error, errorInfo) {
+        console.error('[HYDRATION_RECOVERABLE_ERROR]', error);
+        if (errorInfo?.componentStack) {
+          console.error('[HYDRATION_COMPONENT_STACK]', errorInfo.componentStack);
+        }
+      },
+    },
   );
 } else if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
